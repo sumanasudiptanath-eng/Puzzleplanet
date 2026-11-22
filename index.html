@@ -1,1 +1,135 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzlePlanet</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#25145c,#087eaa);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+h1 { color: #ffe66d; font-size: 36px; }
+.card {
+  background: white;
+  color: #29234f;
+  padding: 25px;
+  margin: 20px auto;
+  border-radius: 20px;
+  max-width: 420px;
+}
+button {
+  background: #ffcf40;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  margin: 8px;
+}
+#question { font-size: 28px; }
+input {
+  padding: 12px;
+  font-size: 18px;
+  width: 70%;
+}
+</style>
+</head>
+<body>
+
+<h1>🌍 PuzzlePlanet</h1>
+<p>Play • Think • Learn • Win!</p>
+
+<div class="card">
+<select id="language" onchange="changeLanguage()">
+<option value="en">English</option>
+<option value="hi">हिन्दी</option>
+<option value="bn">বাংলা</option>
+</select>
+
+<h2 id="welcome">Welcome to PuzzlePlanet!</h2>
+<p id="instruction">Challenge your brain!</p>
+
+<button id="start" onclick="startGame()">Start Game 🎮</button>
+
+<div id="game" style="display:none">
+<p id="level"></p>
+<h2 id="question"></h2>
+<input id="answer" type="number" placeholder="Your answer">
+<br>
+<button onclick="checkAnswer()" id="submit">Submit</button>
+<p id="result"></p>
+</div>
+</div>
+
+<div class="card">
+<h2>🧠 Brain Challenge</h2>
+<p>Score: <span id="score">0</span></p>
+<p>Best Score: <span id="best">0</span></p>
+</div>
+
+<footer>© 2026 PuzzlePlanet ❤️</footer>
+
+<script>
+let a,b,score=0,count=0,lang="en";
+
+const words={
+en:["Welcome to PuzzlePlanet!","Challenge your brain!","Start Game 🎮","Submit","Correct! 🎉","Try again!","Game Over!"],
+hi:["PuzzlePlanet में आपका स्वागत है!","अपने दिमाग को चुनौती दें!","खेल शुरू करें 🎮","जवाब दें","सही जवाब! 🎉","फिर कोशिश करें!","खेल समाप्त!"],
+bn:["PuzzlePlanet-এ স্বাগতম!","আপনার বুদ্ধির পরীক্ষা দিন!","খেলা শুরু করুন 🎮","জমা দিন","সঠিক উত্তর! 🎉","আবার চেষ্টা করুন!","খেলা শেষ!"]
+};
+
+function changeLanguage(){
+lang=document.getElementById("language").value;
+welcome.innerText=words[lang][0];
+instruction.innerText=words[lang][1];
+start.innerText=words[lang][2];
+submit.innerText=words[lang][3];
+}
+
+function startGame(){
+score=0;
+count=0;
+document.getElementById("score").innerText=0;
+document.getElementById("game").style.display="block";
+document.getElementById("start").style.display="none";
+nextQuestion();
+}
+
+function nextQuestion(){
+if(count>=10){
+question.innerText=words[lang][6];
+result.innerText="Final Score: "+score+"/10";
+start.style.display="inline-block";
+return;
+}
+count++;
+a=Math.floor(Math.random()*20)+1;
+b=Math.floor(Math.random()*20)+1;
+level.innerText="Question "+count+" of 10";
+question.innerText=a+" + "+b+" = ?";
+answer.value="";
+result.innerText="";
+}
+
+function checkAnswer(){
+if(answer.value==="")return;
+if(Number(answer.value)===a+b){
+score++;
+result.innerText=words[lang][4];
+}else{
+result.innerText=words[lang][5]+" Answer: "+(a+b);
+}
+document.getElementById("score").innerText=score;
+setTimeout(nextQuestion,1000);
+}
+
+best.innerText=localStorage.getItem("ppbest")||0;
+</script>
+</body>
+</html>
+
