@@ -1,134 +1,239 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PuzzlePlanet</title>
+<title>PuzzlePlanet - Play & Learn</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#25145c,#087eaa);
-  color: white;
-  text-align: center;
-  padding: 20px;
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#25145c,#087eaa);
+color:white;
+text-align:center;
+min-height:100vh;
 }
-h1 { color: #ffe66d; font-size: 36px; }
-.card {
-  background: white;
-  color: #29234f;
-  padding: 25px;
-  margin: 20px auto;
-  border-radius: 20px;
-  max-width: 420px;
+header{padding:25px 12px}
+h1{font-size:36px;margin:5px}
+header p{color:#e0eaff}
+select{
+padding:10px;border-radius:10px;border:0;
+font-size:15px;margin:10px;
 }
-button {
-  background: #ffcf40;
-  padding: 14px 22px;
-  border: none;
-  border-radius: 12px;
-  font-size: 17px;
-  margin: 8px;
+.container{padding:15px;max-width:850px;margin:auto}
+.games{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
 }
-#question { font-size: 28px; }
-input {
-  padding: 12px;
-  font-size: 18px;
-  width: 70%;
+.card{
+background:white;color:#25145c;
+padding:20px;border-radius:18px;
+box-shadow:0 5px 15px #0004;
 }
+.card h2{margin:8px}
+.card button, .game button{
+background:#ff6b35;color:white;
+border:0;padding:12px 20px;
+border-radius:10px;font-size:16px;
+cursor:pointer;margin:5px;
+}
+.card button:hover,button:hover{opacity:.85}
+#gameArea{
+display:none;background:white;color:#25145c;
+padding:20px;border-radius:18px;
+margin:20px auto;max-width:500px;
+}
+#gameArea input{
+padding:12px;border:1px solid #aaa;
+border-radius:8px;font-size:18px;width:130px;
+}
+#result{font-weight:bold;margin:15px}
+footer{padding:25px;color:#ddd}
 </style>
 </head>
 <body>
 
+<header>
 <h1>🌍 PuzzlePlanet</h1>
-<p>Play • Think • Learn • Win!</p>
-
-<div class="card">
+<p id="welcome">Play • Think • Win!</p>
 <select id="language" onchange="changeLanguage()">
 <option value="en">English</option>
 <option value="hi">हिन्दी</option>
 <option value="bn">বাংলা</option>
 </select>
+</header>
 
-<h2 id="welcome">Welcome to PuzzlePlanet!</h2>
-<p id="instruction">Challenge your brain!</p>
+<div class="container">
+<h2 id="choose">Choose Your Game</h2>
 
-<button id="start" onclick="startGame()">Start Game 🎮</button>
-
-<div id="game" style="display:none">
-<p id="level"></p>
-<h2 id="question"></h2>
-<input id="answer" type="number" placeholder="Your answer">
-<br>
-<button onclick="checkAnswer()" id="submit">Submit</button>
-<p id="result"></p>
-</div>
+<div class="games" id="games">
+<div class="card">
+<h2>🧠 Number Guess</h2>
+<p id="desc1">Guess the secret number between 1 and 20.</p>
+<button onclick="startGame('guess')" id="play1">Play Now</button>
 </div>
 
 <div class="card">
-<h2>🧠 Brain Challenge</h2>
-<p>Score: <span id="score">0</span></p>
-<p>Best Score: <span id="best">0</span></p>
+<h2>🔢 Math Challenge</h2>
+<p id="desc2">Solve the mathematical question.</p>
+<button onclick="startGame('math')" id="play2">Play Now</button>
 </div>
 
-<footer>© 2026 PuzzlePlanet ❤️</footer>
+<div class="card">
+<h2>🧩 Memory Challenge</h2>
+<p id="desc3">Remember the number sequence.</p>
+<button onclick="startGame('memory')" id="play3">Play Now</button>
+</div>
+</div>
+
+<div id="gameArea">
+<h2 id="gameTitle">Game</h2>
+<div id="question"></div>
+<div id="controls"></div>
+<div id="result"></div>
+<button onclick="backHome()" id="back">⬅ Back to Home</button>
+</div>
+</div>
+
+<footer>© 2026 PuzzlePlanet | Play • Think • Grow</footer>
 
 <script>
-let a,b,score=0,count=0,lang="en";
+let secret=0, answer=0, sequence=[];
 
-const words={
-en:["Welcome to PuzzlePlanet!","Challenge your brain!","Start Game 🎮","Submit","Correct! 🎉","Try again!","Game Over!"],
-hi:["PuzzlePlanet में आपका स्वागत है!","अपने दिमाग को चुनौती दें!","खेल शुरू करें 🎮","जवाब दें","सही जवाब! 🎉","फिर कोशिश करें!","खेल समाप्त!"],
-bn:["PuzzlePlanet-এ স্বাগতম!","আপনার বুদ্ধির পরীক্ষা দিন!","খেলা শুরু করুন 🎮","জমা দিন","সঠিক উত্তর! 🎉","আবার চেষ্টা করুন!","খেলা শেষ!"]
+const translations={
+en:{
+welcome:"Play • Think • Win!",choose:"Choose Your Game",
+d1:"Guess the secret number between 1 and 20.",
+d2:"Solve the mathematical question.",
+d3:"Remember the number sequence.",
+play:"Play Now",back:"⬅ Back to Home",
+guess:"Guess the Number",math:"Math Challenge",
+memory:"Memory Challenge",submit:"Submit",
+placeholder:"Your answer",correct:"🎉 Correct! Well done!",
+higher:"Try a higher number!",lower:"Try a lower number!",
+wrong:"❌ Not correct. Try again!",
+remember:"Remember this sequence:",
+recall:"Enter the sequence without spaces",
+start:"Start"
+},
+hi:{
+welcome:"खेलें • सोचें • जीतें!",choose:"अपना खेल चुनें",
+d1:"1 से 20 के बीच सही नंबर पहचानें।",
+d2:"गणित का सवाल हल करें।",
+d3:"नंबर की श्रृंखला याद रखें।",
+play:"अभी खेलें",back:"⬅ वापस जाएं",
+guess:"नंबर पहचानें",math:"गणित चुनौती",
+memory:"याददाश्त चुनौती",submit:"जमा करें",
+placeholder:"अपना जवाब",correct:"🎉 सही जवाब! बहुत अच्छा!",
+higher:"बड़ा नंबर आज़माएं!",lower:"छोटा नंबर आज़माएं!",
+wrong:"❌ गलत जवाब। फिर कोशिश करें!",
+remember:"इस श्रृंखला को याद रखें:",
+recall:"बिना स्पेस के नंबर लिखें",
+start:"शुरू करें"
+},
+bn:{
+welcome:"খেলুন • ভাবুন • জিতুন!",choose:"আপনার খেলা বেছে নিন",
+d1:"১ থেকে ২০-এর মধ্যে গোপন সংখ্যাটি অনুমান করুন।",
+d2:"গণিতের প্রশ্নটি সমাধান করুন।",
+d3:"সংখ্যার ধারাটি মনে রাখুন।",
+play:"খেলুন",back:"⬅ ফিরে যান",
+guess:"সংখ্যা অনুমান",math:"গণিত চ্যালেঞ্জ",
+memory:"স্মৃতি চ্যালেঞ্জ",submit:"জমা দিন",
+placeholder:"আপনার উত্তর",correct:"🎉 সঠিক! খুব ভালো!",
+higher:"আরও বড় সংখ্যা চেষ্টা করুন!",lower:"আরও ছোট সংখ্যা চেষ্টা করুন!",
+wrong:"❌ ভুল উত্তর। আবার চেষ্টা করুন!",
+remember:"এই সংখ্যার ধারাটি মনে রাখুন:",
+recall:"স্পেস ছাড়া সংখ্যাটি লিখুন",
+start:"শুরু করুন"
+}
 };
 
+function t(key){
+return translations[document.getElementById("language").value][key];
+}
+
 function changeLanguage(){
-lang=document.getElementById("language").value;
-welcome.innerText=words[lang][0];
-instruction.innerText=words[lang][1];
-start.innerText=words[lang][2];
-submit.innerText=words[lang][3];
+let lang=translations[document.getElementById("language").value];
+document.getElementById("welcome").textContent=lang.welcome;
+document.getElementById("choose").textContent=lang.choose;
+document.getElementById("desc1").textContent=lang.d1;
+document.getElementById("desc2").textContent=lang.d2;
+document.getElementById("desc3").textContent=lang.d3;
+["play1","play2","play3"].forEach(id=>{
+document.getElementById(id).textContent=lang.play;
+});
+document.getElementById("back").textContent=lang.back;
 }
 
-function startGame(){
-score=0;
-count=0;
-document.getElementById("score").innerText=0;
-document.getElementById("game").style.display="block";
-document.getElementById("start").style.display="none";
-nextQuestion();
+function startGame(type){
+document.getElementById("games").style.display="none";
+document.getElementById("gameArea").style.display="block";
+document.getElementById("result").textContent="";
+let title={guess:"guess",math:"math",memory:"memory"};
+document.getElementById("gameTitle").textContent=t(title[type]);
+
+if(type==="guess"){
+secret=Math.floor(Math.random()*20)+1;
+document.getElementById("question").textContent=t("guess");
+document.getElementById("controls").innerHTML=
+'<input id="answer" type="number" min="1" max="20" placeholder="1-20"><button onclick="checkGuess()">'+t("submit")+'</button>';
 }
 
-function nextQuestion(){
-if(count>=10){
-question.innerText=words[lang][6];
-result.innerText="Final Score: "+score+"/10";
-start.style.display="inline-block";
-return;
-}
-count++;
-a=Math.floor(Math.random()*20)+1;
-b=Math.floor(Math.random()*20)+1;
-level.innerText="Question "+count+" of 10";
-question.innerText=a+" + "+b+" = ?";
-answer.value="";
-result.innerText="";
+if(type==="math"){
+let a=Math.floor(Math.random()*20)+1;
+let b=Math.floor(Math.random()*20)+1;
+answer=a+b;
+document.getElementById("question").textContent=a+" + "+b+" = ?";
+document.getElementById("controls").innerHTML=
+'<input id="answer" type="number" placeholder="Answer"><button onclick="checkMath()">'+t("submit")+'</button>';
 }
 
-function checkAnswer(){
-if(answer.value==="")return;
-if(Number(answer.value)===a+b){
-score++;
-result.innerText=words[lang][4];
-}else{
-result.innerText=words[lang][5]+" Answer: "+(a+b);
+if(type==="memory"){
+sequence=Array.from({length:5},()=>Math.floor(Math.random()*10));
+document.getElementById("question").textContent=t("remember")+"\n"+sequence.join(" - ");
+document.getElementById("controls").innerHTML=
+'<button onclick="showMemoryInput()">'+t("start")+'</button>';
 }
-document.getElementById("score").innerText=score;
-setTimeout(nextQuestion,1000);
 }
 
-best.innerText=localStorage.getItem("ppbest")||0;
+function checkGuess(){
+let n=Number(document.getElementById("answer").value);
+let result=document.getElementById("result");
+if(!n){result.textContent=t("wrong");return;}
+if(n===secret)result.textContent=t("correct");
+else if(n<secret)result.textContent=t("higher");
+else result.textContent=t("lower");
+}
+
+function checkMath(){
+let n=Number(document.getElementById("answer").value);
+document.getElementById("result").textContent=
+n===answer?t("correct"):t("wrong");
+}
+
+function showMemoryInput(){
+document.getElementById("question").textContent=t("recall");
+document.getElementById("controls").innerHTML=
+'<input id="answer" type="text" placeholder="12345"><button onclick="checkMemory()">'+t("submit")+'</button>';
+}
+
+function checkMemory(){
+let n=document.getElementById("answer").value.trim();
+document.getElementById("result").textContent=
+n===sequence.join("")?t("correct"):t("wrong");
+}
+
+function backHome(){
+document.getElementById("gameArea").style.display="none";
+document.getElementById("games").style.display="grid";
+document.getElementById("question").textContent="";
+document.getElementById("controls").textContent="";
+document.getElementById("result").textContent="";
+}
 </script>
 </body>
 </html>
