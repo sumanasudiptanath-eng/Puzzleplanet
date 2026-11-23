@@ -2,90 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PuzzlePlanet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzlePlanet - Play & Have Fun</title>
+<meta name="description" content="Play free online games at PuzzlePlanet. Enjoy puzzles, chess, racing, Ludo and more!">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3efff;color:#282044}
-header{background:linear-gradient(120deg,#5725bc,#079bd0);color:white;text-align:center;padding:24px 12px}header h1{margin:0;font-size:32px}
-nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;background:white;padding:12px;position:sticky;top:0}
-button,select{border:0;border-radius:9px;padding:11px 14px;font-weight:bold;cursor:pointer}nav button{background:#eee7ff;color:#5426a6}
-main{max-width:1000px;margin:auto;padding:18px}.screen{display:none;background:white;padding:20px;border-radius:17px;box-shadow:0 3px 12px #ddd;min-height:300px}.active{display:block}
-.hero{background:linear-gradient(120deg,#7540d0,#12a0d0);color:white;text-align:center;padding:32px 15px;border-radius:17px}.hero button{background:white;color:#5426a6}
-.stats,.games{display:flex;gap:13px;flex-wrap:wrap;justify-content:center;margin:18px 0}.stat,.game-card{background:white;border-radius:14px;padding:17px;box-shadow:0 2px 10px #ddd;text-align:center}.stat strong{display:block;font-size:23px;color:#6532bd}
-.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.game-card .emoji{font-size:38px}.game-card p{color:#666;min-height:34px}.game-card button,.primary{background:#6734c8;color:white}.game-card button{width:100%}
-.back{background:#eee7ff;color:#5426a6;margin-bottom:12px}.message{font-weight:bold;color:#16834c;margin:14px 0}
-input{padding:9px;border:1px solid #bbb;border-radius:7px;max-width:100%}
-.sudoku{display:grid;grid-template-columns:repeat(9,1fr);max-width:360px;margin:15px auto;gap:2px;background:#333;border:2px solid #333}
-.sudoku input{width:100%;min-width:0;height:35px;text-align:center;padding:0;border:0;border-radius:0}.fixed{background:#e8e1ff;font-weight:bold}
-.wordgrid{display:grid;grid-template-columns:repeat(8,34px);gap:3px;justify-content:center;margin:18px auto}.wordgrid button{width:34px;height:34px;padding:0;background:#eee7ff;color:#33215e}.wordgrid .selected{background:#6734c8;color:white}
-.memory{display:grid;grid-template-columns:repeat(4,60px);gap:8px;justify-content:center;margin:20px auto}.memory button{height:60px;padding:0;font-size:24px;background:#7040c9;color:white}.memory .open{background:#eee7ff;color:#33215e}.memory .done{background:#b7efd1;color:#17633b}
-.numbergrid{display:grid;grid-template-columns:repeat(3,65px);gap:6px;justify-content:center;margin:20px auto}.numbergrid button{height:65px;font-size:22px;background:#7040c9;color:white}.numbergrid .empty{background:#eee;color:#eee}
-.quiz-option{display:block;width:100%;max-width:350px;margin:10px auto;background:#eee7ff;color:#33215e}.clue{margin:12px 0;padding:12px;background:#f4f1ff;border-radius:10px}footer{text-align:center;color:#777;padding:24px}
-@media(max-width:400px){.sudoku input{height:30px}.wordgrid{grid-template-columns:repeat(8,30px)}.wordgrid button{width:30px;height:30px}}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ color:white;
+ background:linear-gradient(140deg,#100d2d,#25205d,#073d63);
+ min-height:100vh;
+}
+header{
+ text-align:center;
+ padding:38px 15px 25px;
+}
+.logo{font-size:48px}
+h1{font-size:36px;margin:10px 0}
+header p{color:#d6d5ff;font-size:15px}
+.tag{display:inline-block;background:#ffffff18;
+ padding:9px 17px;border-radius:30px;margin-top:8px}
+.container{max-width:1000px;margin:auto;padding:15px}
+.section-title{text-align:center;margin:15px 0 25px;font-size:23px}
+.games{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:15px;
+}
+.game{
+ text-decoration:none;color:white;
+ background:linear-gradient(145deg,#ffffff20,#ffffff09);
+ border:1px solid #ffffff35;
+ border-radius:22px;
+ padding:22px 8px;
+ text-align:center;
+ transition:.2s;
+ box-shadow:0 8px 20px #0003;
+}
+.game:active{transform:scale(.96)}
+.game .icon{font-size:48px;margin-bottom:12px}
+.game h2{font-size:17px;margin:7px 0}
+.game p{font-size:12px;color:#d6d5ff;margin:8px 0}
+.play{
+ display:inline-block;
+ background:#ffca62;
+ color:#272047;
+ font-weight:bold;
+ padding:9px 20px;
+ border-radius:20px;
+ margin-top:8px;
+ font-size:13px;
+}
+footer{text-align:center;color:#c5c5e8;padding:35px 10px;font-size:13px}
+@media(min-width:650px){
+ .games{grid-template-columns:repeat(3,1fr);gap:22px}
+ .game{padding:30px 15px}
+ .game .icon{font-size:58px}
+}
 </style>
 </head>
 <body>
-<header><h1>🌍 PuzzlePlanet</h1><p>Play • Think • Learn • Enjoy!</p></header>
-<nav>
-<button onclick="goHome()">🏠 Home</button><button onclick="showGames()">🎮 Games</button><button onclick="showDaily()">⭐ Daily Challenge</button>
-<select id="language" onchange="changeLanguage()"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select>
-</nav>
-<main>
-<section id="home" class="screen active">
-<div class="hero"><h2 id="welcome">Welcome to PuzzlePlanet!</h2><p id="tagline">Challenge your brain with fun and exciting games.</p><button onclick="showGames()" id="explore">Explore Games →</button></div>
-<div class="stats"><div class="stat">🏆<strong id="totalScore">0</strong>Total Points</div><div class="stat">🎯<strong>6</strong>Games</div><div class="stat">⭐<strong>∞</strong>Fun</div></div>
-<h2>🎮 Choose Your Game</h2><div class="games" id="homeCards"></div>
-</section>
-<section id="gamesPage" class="screen"><button class="back" onclick="goHome()">← Home</button><h2>🎮 All Games</h2><div class="games" id="allCards"></div></section>
-<section id="dailyPage" class="screen"><button class="back" onclick="goHome()">← Home</button><h2>⭐ Daily Brain Challenge</h2><p>What has hands but cannot clap?</p><div id="dailyOptions"></div><p id="dailyMessage" class="message"></p></section>
-<section id="playPage" class="screen"><button class="back" onclick="showGames()">← Back to Games</button><h2 id="gameTitle"></h2><p id="gameDescription"></p><div id="gameArea"></div><p id="gameMessage" class="message"></p></section>
-</main><footer>© 2026 PuzzlePlanet | Made for curious minds 💜</footer>
-<script>
-const games=[
-{id:"sudoku",icon:"🔢",name:"Sudoku",desc:"Fill the grid with numbers."},
-{id:"word",icon:"🔤",name:"Word Search",desc:"Find hidden words."},
-{id:"memory",icon:"🧠",name:"Memory Match",desc:"Match all the hidden pairs."},
-{id:"crossword",icon:"📝",name:"Crossword",desc:"Solve clues and test vocabulary."},
-{id:"number",icon:"🔀",name:"Number Puzzle",desc:"Arrange numbers in order."},
-{id:"brain",icon:"💡",name:"Brain Teasers",desc:"Solve tricky questions."}];
-let score=Number(localStorage.getItem("ppScore")||0),wordSelected=[],wordFound=[],memoryValues=[],memoryOpen=[],memoryDone=[],memoryBusy=false,numberBoard=[],quizIndex=0,brainScore=0;
-function updateScore(){document.getElementById("totalScore").textContent=score;localStorage.setItem("ppScore",score)}
-function points(n){score+=n;updateScore()}
-function cards(){return games.map(g=>`<div class="game-card"><div class="emoji">${g.icon}</div><h3>${g.name}</h3><p>${g.desc}</p><button onclick="openGame('${g.id}')">Play Now →</button></div>`).join("")}
-function hideScreens(){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"))}
-function goHome(){hideScreens();document.getElementById("home").classList.add("active")}
-function showGames(){hideScreens();document.getElementById("gamesPage").classList.add("active")}
-function showDaily(){hideScreens();document.getElementById("dailyPage").classList.add("active");dailyChallenge()}
-function say(t){document.getElementById("gameMessage").textContent=t}
-function openGame(id){hideScreens();document.getElementById("playPage").classList.add("active");let g=games.find(x=>x.id===id);document.getElementById("gameTitle").textContent=g.icon+" "+g.name;document.getElementById("gameDescription").textContent=g.desc;document.getElementById("gameMessage").textContent="";let a=document.getElementById("gameArea");a.innerHTML="";({sudoku,word:wordSearch,memory,crossword,number:numberPuzzle,brain:brainTeasers})[id]()}
-const solution=[[5,3,4,6,7,8,9,1,2],[6,7,2,1,9,5,3,4,8],[1,9,8,3,4,2,5,6,7],[8,5,9,7,6,1,4,2,3],[4,2,6,8,5,3,7,9,1],[7,1,3,9,2,4,8,5,6],[9,6,1,5,3,7,2,8,4],[2,8,7,4,1,9,6,3,5],[3,4,5,2,8,6,1,7,9]];
-const puzzle=[[5,0,0,6,0,8,0,1,0],[0,7,2,0,9,0,3,0,8],[1,0,8,3,0,2,0,6,0],[8,5,0,0,6,0,4,0,3],[0,2,6,8,0,3,7,0,0],[7,0,3,0,2,0,0,5,6],[0,6,0,5,0,7,2,0,4],[2,0,7,0,1,0,6,3,0],[0,4,0,2,8,0,0,7,9]];
-function sudoku(){let h='<p>Fill every empty box with the correct number from 1 to 9.</p><div class="sudoku">';puzzle.forEach((row,r)=>row.forEach((v,c)=>h+=`<input inputmode="numeric" maxlength="1" id="s${r}${c}" value="${v||""}" ${v?'readonly class="fixed"':''}>`));document.getElementById("gameArea").innerHTML=h+'</div><button class="primary" onclick="checkSudoku()">Check Answers</button> <button onclick="openGame(\'sudoku\')">Restart</button>'}
-function checkSudoku(){let complete=true,correct=true;puzzle.forEach((row,r)=>row.forEach((v,c)=>{let x=document.getElementById("s"+r+c);if(!x.value)complete=false;if(x.value!=solution[r][c])correct=false}));if(!complete)say("Please fill all boxes first.");else if(correct){say("Sudoku solved! +20 points 🏆");points(20)}else say("Some numbers are incorrect. Try again!")}
-const wordRows=["PUZZLEXX","BRAINXXX","PLANETXX","GAMEXXXX","MEMORYXX","NUMBERXX","WORDXXXX","MINDXXXX"],wordList=["PUZZLE","BRAIN","PLANET","GAME","MEMORY","NUMBER","WORD","MIND"];
-function wordSearch(){wordSelected=[];wordFound=[];let h='<p>Tap letters in order to find these horizontal words:</p><p><b>PUZZLE · BRAIN · PLANET · GAME · MEMORY · NUMBER · WORD · MIND</b></p><div class="wordgrid">';wordRows.forEach((row,r)=>row.split("").forEach((ch,c)=>h+=`<button id="w${r}${c}" onclick="selectWord(${r},${c})">${ch}</button>`));document.getElementById("gameArea").innerHTML=h+'</div><p id="wordProgress">Found: 0 / 8</p><button class="primary" onclick="openGame(\'word\')">Restart</button>'}
-function selectWord(r,c){let k=r+"-"+c;if(wordSelected.includes(k))return;wordSelected.push(k);document.getElementById("w"+r+c).classList.add("selected");let letters=wordSelected.map(k=>{let a=k.split("-");return wordRows[+a[0]][+a[1]]}).join("");let match=wordList.find(w=>w===letters&&!wordFound.includes(w));if(match){wordFound.push(match);wordSelected.forEach(k=>{let a=k.split("-");document.getElementById("w"+a[0]+a[1]).style.background="#b7efd1"});wordSelected=[];document.getElementById("wordProgress").textContent="Found: "+wordFound.length+" / 8";if(wordFound.length===8){say("All words found! +15 points");points(15)}}else if(!wordList.some(w=>w.startsWith(letters))){wordSelected.forEach(k=>{let a=k.split("-");document.getElementById("w"+a[0]+a[1]).classList.remove("selected")});wordSelected=[]}}
-function memory(){let s=["🍎","🚀","🐼","⭐","🎈","🍕","🌈","⚽"];memoryValues=[...s,...s].sort(()=>Math.random()-.5);memoryOpen=[];memoryDone=[];memoryBusy=false;let h='<p>Find all 8 matching pairs!</p><div class="memory">';memoryValues.forEach((v,i)=>h+=`<button id="m${i}" onclick="flipMemory(${i})">?</button>`);document.getElementById("gameArea").innerHTML=h+'</div><button class="primary" onclick="openGame(\'memory\')">Restart Game</button>'}
-function flipMemory(i){if(memoryBusy||memoryDone.includes(i)||memoryOpen.includes(i))return;let b=document.getElementById("m"+i);b.textContent=memoryValues[i];b.classList.add("open");memoryOpen.push(i);if(memoryOpen.length===2){let [a,c]=memoryOpen;if(memoryValues[a]===memoryValues[c]){memoryDone.push(a,c);[a,c].forEach(x=>document.getElementById("m"+x).classList.add("done"));memoryOpen=[];if(memoryDone.length===16){say("Every pair matched! +20 points");points(20)}}else{memoryBusy=true;setTimeout(()=>{[a,c].forEach(x=>{let e=document.getElementById("m"+x);e.textContent="?";e.classList.remove("open")});memoryOpen=[];memoryBusy=false},800)}}}
-const clues=[["A bright object seen in the night sky","STAR"],["Opposite of HOT","COLD"],["A place where books are kept","LIBRARY"],["The planet we live on","EARTH"]];
-function crossword(){let h='<p>Answer each mini crossword clue.</p>';clues.forEach((x,i)=>h+=`<div class="clue"><b>${i+1}. ${x[0]}</b><br><input id="c${i}" placeholder="Your answer"></div>`);document.getElementById("gameArea").innerHTML=h+'<button class="primary" onclick="checkCrossword()">Check Answers</button>'}
-function checkCrossword(){let n=0;clues.forEach((x,i)=>{if(document.getElementById("c"+i).value.trim().toUpperCase()===x[1])n++});if(n===4){say("All clues solved! +15 points");points(15)}else say("You got "+n+" of 4 correct. Try again!")}
-function numberPuzzle(){numberBoard=[1,2,3,4,5,6,7,8,0];for(let i=0;i<100;i++){let z=numberBoard.indexOf(0),opts=[z-3,z+3];if(z%3)opts.push(z-1);if(z%3!==2)opts.push(z+1);let valid=opts.filter(x=>x>=0&&x<9&&Math.abs(Math.floor(x/3)-Math.floor(z/3))+Math.abs(x%3-z%3)===1),m=valid[Math.floor(Math.random()*valid.length)];[numberBoard[z],numberBoard[m]]=[numberBoard[m],numberBoard[z]]}renderNumber()}
-function renderNumber(){let h='<p>Arrange the numbers from 1 to 8. Tap a tile beside the empty space.</p><div class="numbergrid">';numberBoard.forEach((v,i)=>h+=`<button class="${v===0?'empty':''}" onclick="moveNumber(${i})">${v||''}</button>`);document.getElementById("gameArea").innerHTML=h+'</div><button class="primary" onclick="numberPuzzle()">Restart</button>'}
-function moveNumber(i){let z=numberBoard.indexOf(0);if(Math.abs(Math.floor(i/3)-Math.floor(z/3))+Math.abs(i%3-z%3)!==1)return;[numberBoard[i],numberBoard[z]]=[numberBoard[z],numberBoard[i]];renderNumber();if(numberBoard.every((v,i)=>v===((i+1)%9))){say("Puzzle solved! +20 points 🎉");points(20)}}
-const questions=[["What has hands but cannot clap?",["A clock","A bird","A tree"],0],["What gets wetter as it dries?",["A towel","The sun","A book"],0],["What has a neck but no head?",["A bottle","A chair","A shoe"],0],["What has keys but no locks?",["A piano","A door","A box"],0],["What has one eye but cannot see?",["A needle","A cat","A cloud"],0]];
-function brainTeasers(){quizIndex=0;brainScore=0;showBrainQuestion()}
-function showBrainQuestion(){let q=questions[quizIndex],h=`<h3>Question ${quizIndex+1} of ${questions.length}</h3><p>${q[0]}</p>`;q[1].forEach((v,i)=>h+=`<button class="quiz-option" onclick="answerBrain(${i})">${v}</button>`);document.getElementById("gameArea").innerHTML=h}
-function answerBrain(i){if(i===questions[quizIndex][2])brainScore++;quizIndex++;if(quizIndex<questions.length)showBrainQuestion();else{document.getElementById("gameArea").innerHTML=`<h3>You scored ${brainScore} out of ${questions.length}!</h3><button class="primary" onclick="brainTeasers()">Play Again</button>`;if(brainScore===5){say("Perfect score! +20 points");points(20)}else say("Well played! Try again to get all five correct.")}}
-function dailyChallenge(){let box=document.getElementById("dailyOptions"),msg=document.getElementById("dailyMessage");if(localStorage.getItem("ppDaily")===new Date().toDateString()){box.innerHTML="Challenge completed for today! Come back tomorrow.";msg.textContent="⭐ Well done!";return}msg.textContent="";box.innerHTML=["A clock","A bird","A tree"].map((x,i)=>`<button class="quiz-option" onclick="dailyAnswer(${i})">${x}</button>`).join("")}
-function dailyAnswer(i){let msg=document.getElementById("dailyMessage");if(i===0){if(localStorage.getItem("ppDaily")!==new Date().toDateString()){points(10);localStorage.setItem("ppDaily",new Date().toDateString())}msg.textContent="Correct! A clock has hands. +10 points 🎉";document.getElementById("dailyOptions").innerHTML="Challenge completed for today!"}else msg.textContent="Not quite. Try again!"}
-const translations={
-en:["Welcome to PuzzlePlanet!","Challenge your brain with fun and exciting games.","Explore Games →"],
-hi:["PuzzlePlanet में आपका स्वागत है!","मज़ेदार खेलों से अपने दिमाग को चुनौती दें।","खेल देखें →"],
-bn:["PuzzlePlanet-এ স্বাগতম!","মজার খেলায় আপনার মস্তিষ্ককে চ্যালেঞ্জ করুন।","গেম দেখুন →"]
-};
-function changeLanguage(){let t=translations[document.getElementById("language").value];document.getElementById("welcome").textContent=t[0];document.getElementById("tagline").textContent=t[1];document.getElementById("explore").textContent=t[2]}
-document.getElementById("homeCards").innerHTML=cards();document.getElementById("allCards").innerHTML=cards();updateScore();
-</script>
+
+<header>
+ <div class="logo">🌍</div>
+ <h1>PuzzlePlanet</h1>
+ <p>Play • Think • Challenge Yourself!</p>
+ <div class="tag">✨ Your World of Free Online Games ✨</div>
+</header>
+
+<main class="container">
+ <h2 class="section-title">🎮 CHOOSE YOUR GAME</h2>
+
+ <div class="games">
+
+  <a class="game" href="games/ludo.html">
+   <div class="icon">🎲</div>
+   <h2>Ludo</h2>
+   <p>Roll the dice and win!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+  <a class="game" href="games/car-racing.html">
+   <div class="icon">🏎️</div>
+   <h2>Car Racing</h2>
+   <p>Race and beat your score!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+  <a class="game" href="games/word-puzzle.html">
+   <div class="icon">🔤</div>
+   <h2>Word Puzzle</h2>
+   <p>Test your vocabulary!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+  <a class="game" href="games/chess.html">
+   <div class="icon">♟️</div>
+   <h2>Chess</h2>
+   <p>Challenge your mind!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+  <a class="game" href="games/carrom.html">
+   <div class="icon">🎯</div>
+   <h2>Carrom</h2>
+   <p>Show your aiming skills!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+  <a class="game" href="games/block-puzzle.html">
+   <div class="icon">🧩</div>
+   <h2>Block Puzzle</h2>
+   <p>Fit the blocks and score!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+ </div>
+</main>
+
+<footer>
+ <p>🌍 PuzzlePlanet</p>
+ <p>Play. Think. Enjoy. Repeat!</p>
+ <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
+</footer>
+
 </body>
 </html>
