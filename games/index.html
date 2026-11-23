@@ -3,100 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PuzzlePlanet Games</title>
+<title>PuzzlePlanet - Play & Have Fun</title>
+<meta name="description" content="Play free online games at PuzzlePlanet. Enjoy puzzles, chess, racing, Ludo and more!">
 <style>
 *{box-sizing:border-box}
 body{
  margin:0;
  font-family:Arial,sans-serif;
- background:linear-gradient(135deg,#101044,#29216d);
  color:white;
+ background:linear-gradient(140deg,#100d2d,#25205d,#073d63);
+ min-height:100vh;
+}
+header{
  text-align:center;
+ padding:38px 15px 25px;
 }
-header{padding:35px 15px 20px}
-header h1{font-size:34px;margin:0;color:#ffd54f}
-header p{color:#ddd;font-size:16px}
-.container{
- max-width:1000px;
- margin:auto;
- padding:15px;
-}
+.logo{font-size:48px}
+h1{font-size:36px;margin:10px 0}
+header p{color:#d6d5ff;font-size:15px}
+.tag{display:inline-block;background:#ffffff18;
+ padding:9px 17px;border-radius:30px;margin-top:8px}
+.container{max-width:1000px;margin:auto;padding:15px}
+.section-title{text-align:center;margin:15px 0 25px;font-size:23px}
 .games{
  display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:16px;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:15px;
 }
 .game{
- background:white;
- color:#222;
- border-radius:18px;
- padding:25px 10px;
- text-decoration:none;
- box-shadow:0 5px 15px #0005;
+ text-decoration:none;color:white;
+ background:linear-gradient(145deg,#ffffff20,#ffffff09);
+ border:1px solid #ffffff35;
+ border-radius:22px;
+ padding:22px 8px;
+ text-align:center;
  transition:.2s;
+ box-shadow:0 8px 20px #0003;
 }
 .game:active{transform:scale(.96)}
-.emoji{font-size:55px}
-.game h2{margin:12px 0 5px;font-size:21px}
-.game p{font-size:13px;color:#666}
-footer{padding:30px;color:#ccc;font-size:13px}
+.game .icon{font-size:48px;margin-bottom:12px}
+.game h2{font-size:17px;margin:7px 0}
+.game p{font-size:12px;color:#d6d5ff;margin:8px 0}
+.play{
+ display:inline-block;
+ background:#ffca62;
+ color:#272047;
+ font-weight:bold;
+ padding:9px 20px;
+ border-radius:20px;
+ margin-top:8px;
+ font-size:13px;
+}
+footer{text-align:center;color:#c5c5e8;padding:35px 10px;font-size:13px}
 @media(min-width:650px){
- .games{grid-template-columns:repeat(3,1fr)}
+ .games{grid-template-columns:repeat(3,1fr);gap:22px}
+ .game{padding:30px 15px}
+ .game .icon{font-size:58px}
 }
 </style>
 </head>
 <body>
 
 <header>
-<h1>🌍 PuzzlePlanet</h1>
-<p>Play • Think • Challenge Yourself!</p>
+ <div class="logo">🌍</div>
+ <h1>PuzzlePlanet</h1>
+ <p>Play • Think • Challenge Yourself!</p>
+ <div class="tag">✨ Your World of Free Online Games ✨</div>
 </header>
 
-<div class="container">
-<div class="games">
+<main class="container">
+ <h2 class="section-title">🎮 CHOOSE YOUR GAME</h2>
 
-<a class="game" href="ludo.html">
-<div class="emoji">🎲</div>
-<h2>Ludo</h2>
-<p>Roll the dice and win!</p>
-</a>
+ <div class="games">
 
-<a class="game" href="car-racing.html">
-<div class="emoji">🏎️</div>
-<h2>Car Racing</h2>
-<p>Race to the finish!</p>
-</a>
+  <a class="game" href="games/ludo.html">
+   <div class="icon">🎲</div>
+   <h2>Ludo</h2>
+   <p>Roll the dice and win!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
 
-<a class="game" href="word-puzzle.html">
-<div class="emoji">🔤</div>
-<h2>Word Puzzle</h2>
-<p>Test your vocabulary!</p>
-</a>
+  <a class="game" href="games/car-racing.html">
+   <div class="icon">🏎️</div>
+   <h2>Car Racing</h2>
+   <p>Race and beat your score!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
 
-<a class="game" href="chess.html">
-<div class="emoji">♟️</div>
-<h2>Chess</h2>
-<p>Challenge your mind!</p>
-</a>
+  <a class="game" href="games/word-puzzle.html">
+   <div class="icon">🔤</div>
+   <h2>Word Puzzle</h2>
+   <p>Test your vocabulary!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
 
-<a class="game" href="carrom.html">
-<div class="emoji">🎯</div>
-<h2>Carrom</h2>
-<p>Take your best shot!</p>
-</a>
+  <a class="game" href="games/chess.html">
+   <div class="icon">♟️</div>
+   <h2>Chess</h2>
+   <p>Challenge your mind!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
 
-<a class="game" href="block-puzzle.html">
-<div class="emoji">🧩</div>
-<h2>Block Puzzle</h2>
-<p>Fit the blocks!</p>
-</a>
+  <a class="game" href="games/carrom.html">
+   <div class="icon">🎯</div>
+   <h2>Carrom</h2>
+   <p>Show your aiming skills!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
 
-</div>
-</div>
+  <a class="game" href="games/block-puzzle.html">
+   <div class="icon">🧩</div>
+   <h2>Block Puzzle</h2>
+   <p>Fit the blocks and score!</p>
+   <span class="play">PLAY NOW →</span>
+  </a>
+
+ </div>
+</main>
 
 <footer>
-<p>© 2026 PuzzlePlanet Games</p>
-<p>Play Anytime • Anywhere</p>
+ <p>🌍 PuzzlePlanet</p>
+ <p>Play. Think. Enjoy. Repeat!</p>
+ <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
 </footer>
 
 </body>
