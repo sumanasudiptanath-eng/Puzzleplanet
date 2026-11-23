@@ -6,67 +6,26 @@
 <title>PuzzlePlanet Turbo Rush</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#080d19;color:white;
- font-family:Arial,sans-serif;text-align:center;
- overflow-x:hidden;touch-action:manipulation
-}
-h1{margin:12px 0 2px;color:#31eaff;letter-spacing:2px}
-.sub{color:#aab9d1;margin:4px 0 12px}
-#gameWrap{position:relative;width:min(100%,440px);margin:auto}
-canvas{
- display:block;width:100%;height:auto;
- background:#101b32;touch-action:none
-}
-#hud{
- position:absolute;top:8px;left:8px;right:8px;
- display:flex;justify-content:space-between;gap:5px;
- pointer-events:none
-}
-.stat{
- background:#091321dd;border:1px solid #36dfff;
- border-radius:9px;padding:7px 9px;font-size:12px;
- font-weight:bold;text-shadow:0 0 8px #00cfff
-}
-#overlay{
- position:absolute;inset:0;background:#07101bdc;
- display:flex;align-items:center;justify-content:center;
- padding:15px
-}
-#panel{
- width:100%;background:linear-gradient(145deg,#152b49,#091323);
- border:2px solid #20dfff;border-radius:18px;
- padding:18px 13px;box-shadow:0 0 25px #00bfff55
-}
+body{margin:0;background:#080d19;color:white;font-family:Arial;text-align:center}
+h1{color:#31eaff;margin:12px 0 3px;letter-spacing:2px}
+.sub{color:#b5c7df;margin:5px 0 12px}
+#wrap{position:relative;width:min(100%,440px);margin:auto}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+#hud{position:absolute;top:8px;left:6px;right:6px;display:flex;justify-content:space-between;gap:4px;pointer-events:none}
+.stat{background:#071321dd;border:1px solid #36dfff;border-radius:8px;padding:7px 5px;font-size:11px;font-weight:bold}
+#overlay{position:absolute;inset:0;background:#06101bdc;display:flex;align-items:center;justify-content:center;padding:12px}
+#panel{width:100%;background:linear-gradient(145deg,#173353,#091323);border:2px solid #20dfff;border-radius:18px;padding:15px 10px;box-shadow:0 0 25px #00bfff55}
 #panel h2{color:#31eaff;margin:5px}
-#panel p{color:#c5d5e9;font-size:14px}
-select,button{
- border:0;border-radius:10px;padding:12px;
- font-weight:bold;font-size:15px
-}
-select{width:90%;background:#eaf6ff;color:#111;margin:7px}
-button{background:#19dfff;color:#06111c;cursor:pointer}
-#start{width:90%;margin-top:12px;font-size:19px;
- background:linear-gradient(90deg,#00f5b8,#19dfff);
- box-shadow:0 0 18px #00eaff77}
-.smallbtn{font-size:12px;padding:9px;margin:4px}
-#controls{
- width:min(100%,440px);margin:8px auto 15px;
- display:flex;justify-content:space-around;align-items:center;
- gap:8px;padding:0 8px
-}
-.control{
- width:30%;height:58px;font-size:23px;
- border:2px solid #45dfff;background:#102d4a;
- color:white;box-shadow:0 0 12px #00cfff44;
- touch-action:none
-}
-#nitro{
- width:36%;height:58px;background:linear-gradient(90deg,#ff8a00,#ff315f);
- color:white;border:2px solid #ffc15c;font-size:15px
-}
+#panel p{font-size:13px;color:#c9d9ec}
+select,button{border:0;border-radius:10px;padding:12px;font-size:15px;font-weight:bold}
+select{width:94%;margin:5px;background:#eef8ff;color:#111}
+button{cursor:pointer;background:#19dfff;color:#06111c}
+#start{width:94%;margin-top:10px;font-size:19px;background:linear-gradient(90deg,#00f5b8,#19dfff)}
+#controls{width:min(100%,440px);margin:8px auto;display:flex;justify-content:space-around;gap:8px;padding:0 8px}
+.control{width:30%;height:58px;font-size:24px;background:#102d4a;color:white;border:2px solid #45dfff;touch-action:none}
+#nitro{width:36%;height:58px;background:linear-gradient(90deg,#ff8a00,#ff315f);color:white;border:2px solid #ffc15c;font-size:14px;touch-action:none}
 #actions{margin:8px}
-#actions button{margin:3px}
+#actions button{font-size:12px;padding:10px;margin:3px}
 #message{min-height:20px;color:#ffe17a;font-size:13px}
 .hidden{display:none!important}
 </style>
@@ -76,39 +35,44 @@ button{background:#19dfff;color:#06111c;cursor:pointer}
 <h1>⚡ PUZZLEPLANET</h1>
 <div class="sub">TURBO RUSH • HIGHWAY CHALLENGE</div>
 
-<div id="gameWrap">
- <canvas id="game" width="440" height="720"></canvas>
+<div id="wrap">
+<canvas id="game" width="440" height="720"></canvas>
 
- <div id="hud">
-  <div class="stat">SCORE<br><span id="score">0</span></div>
-  <div class="stat">SPEED<br><span id="speed">0</span> km/h</div>
-  <div class="stat">🪙 <span id="coins">0</span></div>
-  <div class="stat">BEST<br><span id="best">0</span></div>
- </div>
+<div id="hud">
+ <div class="stat">SCORE<br><span id="score">0</span></div>
+ <div class="stat">SPEED<br><span id="speed">0</span></div>
+ <div class="stat">🪙 <span id="coins">0</span></div>
+ <div class="stat">BEST<br><span id="best">0</span></div>
+</div>
 
- <div id="overlay">
-  <div id="panel">
-   <h2>🏁 TURBO RUSH</h2>
-   <p>Race fast. Dodge traffic. Collect coins. Use nitro!</p>
-   <p>CHOOSE YOUR RACING CAR</p>
-   <select id="carChoice">
-    <option value="#ff304f">🔥 Red Thunder</option>
-    <option value="#13d9ff">💎 Blue Lightning</option>
-    <option value="#b6ff36">⚡ Green Venom</option>
-    <option value="#ffd12e">🌟 Golden Racer</option>
-    <option value="#d46bff">💜 Purple Storm</option>
-   </select>
-   <p>DIFFICULTY</p>
-   <select id="difficulty">
-    <option value="easy">Easy Ride</option>
-    <option value="normal" selected>Street Racer</option>
-    <option value="hard">Turbo Expert</option>
-   </select>
-   <br>
-   <button id="start" onclick="startGame()">▶ START RACING</button>
-   <p>Use the arrows to steer and hold NITRO to boost!</p>
-  </div>
+<div id="overlay">
+ <div id="panel">
+  <h2>🏁 TURBO RUSH</h2>
+  <p>Choose your car, track and difficulty!</p>
+  <p>YOUR RACING CAR</p>
+  <select id="carChoice">
+   <option value="#ff304f">🔥 Red Thunder</option>
+   <option value="#13d9ff">💎 Blue Lightning</option>
+   <option value="#b6ff36">⚡ Green Venom</option>
+   <option value="#ffd12e">🌟 Golden Racer</option>
+   <option value="#d46bff">💜 Purple Storm</option>
+  </select>
+  <p>CHOOSE YOUR TRACK</p>
+  <select id="trackChoice">
+   <option value="city">🌃 Neon City</option>
+   <option value="desert">🏜️ Desert Highway</option>
+   <option value="mountain">🏔️ Mountain Road</option>
+  </select>
+  <p>DIFFICULTY</p>
+  <select id="difficulty">
+   <option value="easy">Easy Ride</option>
+   <option value="normal" selected>Street Racer</option>
+   <option value="hard">Turbo Expert</option>
+  </select>
+  <button id="start" onclick="startGame()">▶ START RACING</button>
+  <p>Dodge traffic • Collect coins • Activate nitro!</p>
  </div>
+</div>
 </div>
 
 <div id="controls">
@@ -118,11 +82,11 @@ button{background:#19dfff;color:#06111c;cursor:pointer}
 </div>
 
 <div id="actions">
- <button class="smallbtn" onclick="pauseGame()">Ⅱ PAUSE</button>
- <button class="smallbtn" onclick="showMenu()">⌂ MENU</button>
- <button class="smallbtn" onclick="toggleSound()" id="soundBtn">🔊 SOUND ON</button>
+ <button onclick="pauseGame()">Ⅱ PAUSE / RESUME</button>
+ <button onclick="showMenu()">⌂ MENU</button>
+ <button onclick="toggleSound()" id="soundBtn">🔊 SOUND ON</button>
 </div>
-<div id="message">Ready for the highway?</div>
+<div id="message">Choose your track and get ready!</div>
 
 <script>
 const canvas=document.getElementById("game");
@@ -130,23 +94,38 @@ const ctx=canvas.getContext("2d");
 const W=440,H=720;
 
 let running=false,paused=false,over=false;
-let playerX=0,carColor="#ff304f";
+let playerX=220,carColor="#ff304f",track="city";
 let traffic=[],pickups=[],particles=[];
-let score=0,coins=0,best=Number(localStorage.getItem("turboBest")||0);
+let score=0,coins=0;
+let best=Number(localStorage.getItem("turboBest")||0);
 let nitro=100,boosting=false,soundOn=true;
-let baseSpeed=5,speed=5,distance=0;
+let baseSpeed=5.3,speed=5.3,distance=0;
 let last=0,spawn=0,coinSpawn=0,roadMove=0;
 let leftDown=false,rightDown=false;
 let audio=null;
 
 document.getElementById("best").textContent=best;
 
-function roadAt(y){
- const t=y/H;
- const half=65+t*150;
- const center=W/2+Math.sin(distance*.0007+t*1.5)*t*25;
- return {left:center-half,right:center+half,center,half};
-}
+const themes={
+ city:{
+  sky1:"#07152f",sky2:"#17446a",sky3:"#ff925c",
+  ground:"#174b35",road:"#303844",
+  building:"#152b43",light:"#38eaff",
+  stripe:"#f8f5c9"
+ },
+ desert:{
+  sky1:"#542c39",sky2:"#e48b49",sky3:"#ffd17b",
+  ground:"#b77b36",road:"#51433b",
+  building:"#a96a3d",light:"#ffe0a0",
+  stripe:"#fff1ce"
+ },
+ mountain:{
+  sky1:"#122b46",sky2:"#668b9c",sky3:"#c4d8db",
+  ground:"#315b43",road:"#353d45",
+  building:"#496d76",light:"#d5f5ff",
+  stripe:"#f4f4e8"
+ }
+};
 
 function beep(freq=500,duration=.07){
  if(!soundOn)return;
@@ -154,89 +133,127 @@ function beep(freq=500,duration=.07){
   audio=audio||new(window.AudioContext||window.webkitAudioContext)();
   if(audio.state==="suspended")audio.resume();
   const o=audio.createOscillator(),g=audio.createGain();
-  o.frequency.value=freq;
-  o.type="sine";
-  g.gain.value=.045;
-  o.connect(g);g.connect(audio.destination);
-  o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
+  o.frequency.value=freq;o.type="sine";
+  g.gain.value=.045;o.connect(g);g.connect(audio.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
   o.stop(audio.currentTime+duration);
  }catch(e){}
 }
 
 function toggleSound(){
  soundOn=!soundOn;
- document.getElementById("soundBtn").textContent=soundOn?"🔊 SOUND ON":"🔇 SOUND OFF";
+ document.getElementById("soundBtn").textContent=
+ soundOn?"🔊 SOUND ON":"🔇 SOUND OFF";
+}
+
+function roadAt(y){
+ let t=(y-190)/(H-190);
+ let half=65+t*150;
+ let center=W/2+Math.sin(distance*.0007+t*1.5)*t*25;
+ return {left:center-half,right:center+half,center,half};
 }
 
 function rounded(x,y,w,h,r,color){
  ctx.fillStyle=color;
- ctx.beginPath();
- ctx.roundRect(x,y,w,h,r);
- ctx.fill();
+ ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
 }
 
 function drawBackground(){
+ const th=themes[track];
  const sky=ctx.createLinearGradient(0,0,0,420);
- sky.addColorStop(0,"#08152c");
- sky.addColorStop(.65,"#17446a");
- sky.addColorStop(1,"#ff9a54");
+ sky.addColorStop(0,th.sky1);
+ sky.addColorStop(.65,th.sky2);
+ sky.addColorStop(1,th.sky3);
  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
 
- // Distant city skyline
- for(let i=0;i<18;i++){
-  let x=i*27;
-  let bh=35+(i*37%65);
-  ctx.fillStyle=i%2?"#152b43":"#1c3653";
-  ctx.fillRect(x,275-bh,22,bh);
-  ctx.fillStyle="#ffe38a";
-  for(let wy=280-bh;wy<275;wy+=13){
-   ctx.fillRect(x+5,wy,3,4);
-   ctx.fillRect(x+14,wy,3,4);
+ if(track==="city"){
+  for(let i=0;i<19;i++){
+   let x=i*25;
+   let bh=35+(i*37%75);
+   ctx.fillStyle=th.building;
+   ctx.fillRect(x,280-bh,22,bh);
+   ctx.fillStyle=th.light;
+   for(let wy=280-bh;wy<275;wy+=13){
+    ctx.fillRect(x+5,wy,3,4);
+    ctx.fillRect(x+14,wy,3,4);
+   }
+  }
+  const glow=ctx.createRadialGradient(220,260,5,220,260,75);
+  glow.addColorStop(0,"#ffe8a2");
+  glow.addColorStop(1,"#ffb45a00");
+  ctx.fillStyle=glow;ctx.fillRect(130,170,180,180);
+ }
+
+ if(track==="desert"){
+  ctx.fillStyle="#ffdb91";
+  ctx.beginPath();ctx.arc(340,240,45,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#b87942";
+  ctx.beginPath();ctx.moveTo(0,320);ctx.lineTo(80,245);
+  ctx.lineTo(180,320);ctx.lineTo(270,250);
+  ctx.lineTo(440,330);ctx.lineTo(440,400);ctx.lineTo(0,400);
+  ctx.fill();
+  for(let i=0;i<7;i++){
+   let x=(i*79+30)%440;
+   ctx.fillStyle="#563b2b";
+   ctx.fillRect(x,275,5,22);
+   ctx.fillStyle="#35633b";
+   ctx.beginPath();ctx.arc(x+2,271,13,0,Math.PI*2);ctx.fill();
   }
  }
- // Sun
- const glow=ctx.createRadialGradient(220,260,5,220,260,75);
- glow.addColorStop(0,"#ffe8a2");
- glow.addColorStop(1,"#ffb45a00");
- ctx.fillStyle=glow;ctx.fillRect(130,170,180,180);
+
+ if(track==="mountain"){
+  for(let i=0;i<6;i++){
+   let x=i*90-30;
+   ctx.fillStyle=i%2?"#536f81":"#3c5d72";
+   ctx.beginPath();ctx.moveTo(x,330);
+   ctx.lineTo(x+55,195+(i%3)*24);
+   ctx.lineTo(x+115,330);ctx.fill();
+   ctx.fillStyle="#e8f4f2";
+   ctx.beginPath();ctx.moveTo(x+39,235+(i%3)*24);
+   ctx.lineTo(x+55,195+(i%3)*24);
+   ctx.lineTo(x+74,237+(i%3)*24);ctx.fill();
+  }
+ }
 }
 
 function drawRoad(){
+ const th=themes[track];
  drawBackground();
 
- // Road trapezoid
  const top=roadAt(190),bottom=roadAt(720);
- ctx.fillStyle="#303844";
+ ctx.fillStyle=th.ground;ctx.fillRect(0,300,W,420);
+
+ ctx.fillStyle=th.road;
  ctx.beginPath();
  ctx.moveTo(top.left,190);ctx.lineTo(top.right,190);
  ctx.lineTo(bottom.right,720);ctx.lineTo(bottom.left,720);
  ctx.closePath();ctx.fill();
 
- // Roadside grass and borders
  ctx.strokeStyle="#f5f5f5";ctx.lineWidth=5;
- ctx.beginPath();ctx.moveTo(top.left,190);ctx.lineTo(bottom.left,720);
- ctx.moveTo(top.right,190);ctx.lineTo(bottom.right,720);ctx.stroke();
+ ctx.beginPath();
+ ctx.moveTo(top.left,190);ctx.lineTo(bottom.left,720);
+ ctx.moveTo(top.right,190);ctx.lineTo(bottom.right,720);
+ ctx.stroke();
 
- // Lane markings
  for(let lane=1;lane<=2;lane++){
   for(let i=0;i<10;i++){
    let y=190+((i*75+roadMove)%530);
    let r=roadAt(y);
    let x=r.left+(r.right-r.left)*lane/3;
    let size=2+(y/H)*4;
-   ctx.fillStyle="#f8f5c9";
+   ctx.fillStyle=th.stripe;
    ctx.fillRect(x-size,y,size*2,18+(y/H)*25);
   }
  }
- // Roadside lights
+
  for(let i=0;i<8;i++){
   let y=210+((i*85+roadMove*1.1)%500);
   let r=roadAt(y);
   [r.left-17,r.right+17].forEach(x=>{
-   ctx.fillStyle="#192d45";
-   ctx.fillRect(x-3,y-20,6,25);
-   ctx.fillStyle="#36eaff";
-   ctx.shadowBlur=12;ctx.shadowColor="#36eaff";
+   ctx.fillStyle="#192d45";ctx.fillRect(x-3,y-20,6,25);
+   ctx.fillStyle=th.light;
+   ctx.shadowBlur=12;ctx.shadowColor=th.light;
    ctx.beginPath();ctx.arc(x,y-23,5,0,Math.PI*2);ctx.fill();
    ctx.shadowBlur=0;
   });
@@ -245,20 +262,17 @@ function drawRoad(){
 
 function drawCar(x,y,color,scale=1){
  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
- // shadow
- ctx.fillStyle="#0008";ctx.beginPath();ctx.ellipse(0,30,29,10,0,0,Math.PI*2);ctx.fill();
- // wheels
+ ctx.fillStyle="#0008";
+ ctx.beginPath();ctx.ellipse(0,30,29,10,0,0,Math.PI*2);ctx.fill();
  rounded(-29,-17,11,28,4,"#090d14");
  rounded(18,-17,11,28,4,"#090d14");
  rounded(-29,17,11,28,4,"#090d14");
  rounded(18,17,11,28,4,"#090d14");
- // body
  ctx.fillStyle=color;
  ctx.beginPath();
  ctx.moveTo(-20,30);ctx.lineTo(-25,12);ctx.lineTo(-20,-25);
  ctx.lineTo(-12,-34);ctx.lineTo(12,-34);ctx.lineTo(20,-25);
  ctx.lineTo(25,12);ctx.lineTo(20,30);ctx.closePath();ctx.fill();
- // windows
  ctx.fillStyle="#152d46";
  ctx.beginPath();ctx.moveTo(-15,-13);ctx.lineTo(-11,-27);
  ctx.lineTo(11,-27);ctx.lineTo(15,-13);ctx.closePath();ctx.fill();
@@ -269,73 +283,54 @@ function drawCar(x,y,color,scale=1){
  ctx.restore();
 }
 
-function drawTraffic(){
- traffic.forEach(t=>{
-  drawCar(t.x,t.y,t.color,t.scale);
- });
-}
-
-function drawCoins(){
+function draw(){
+ drawRoad();
  pickups.forEach(c=>{
   ctx.save();ctx.translate(c.x,c.y);
   ctx.fillStyle="#ffcf25";ctx.shadowBlur=15;ctx.shadowColor="#ffcf25";
   ctx.beginPath();ctx.arc(0,0,c.r,0,Math.PI*2);ctx.fill();
   ctx.shadowBlur=0;ctx.fillStyle="#9b5a00";
-  ctx.font="bold 15px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
-  ctx.fillText("$",0,1);ctx.restore();
+  ctx.font="bold 15px Arial";ctx.textAlign="center";
+  ctx.textBaseline="middle";ctx.fillText("$",0,1);
+  ctx.restore();
  });
-}
 
-function drawParticles(){
+ traffic.forEach(t=>drawCar(t.x,t.y,t.color,t.scale));
+
  particles.forEach(p=>{
   ctx.globalAlpha=Math.max(0,p.life/25);
   ctx.fillStyle=p.color;
   ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
  });
  ctx.globalAlpha=1;
-}
-
-function drawNitroEffect(){
- if(!boosting)return;
- for(let i=0;i<15;i++){
-  let x=playerX+(Math.random()-.5)*35;
-  let y=630+Math.random()*90;
-  ctx.fillStyle=i%2?"#27eaff":"#ff9b26";
-  ctx.globalAlpha=.7;
-  ctx.fillRect(x,y,3,15+Math.random()*25);
- }
- ctx.globalAlpha=1;
-}
-
-function draw(){
- drawRoad();
- drawCoins();
- drawTraffic();
- drawParticles();
- drawNitroEffect();
- drawCar(playerX,620,carColor,1.15);
 
  if(boosting){
-  ctx.fillStyle="#fff";
-  ctx.font="bold 24px Arial";
-  ctx.textAlign="center";
-  ctx.shadowBlur=15;ctx.shadowColor="#00eaff";
+  for(let i=0;i<15;i++){
+   ctx.fillStyle=i%2?"#27eaff":"#ff9b26";
+   ctx.globalAlpha=.7;
+   ctx.fillRect(playerX+(Math.random()-.5)*35,
+    630+Math.random()*90,3,15+Math.random()*25);
+  }
+  ctx.globalAlpha=1;
+  ctx.fillStyle="#fff";ctx.font="bold 24px Arial";
+  ctx.textAlign="center";ctx.shadowBlur=15;
+  ctx.shadowColor="#00eaff";
   ctx.fillText("TURBO BOOST!",220,150);
   ctx.shadowBlur=0;
  }
+ drawCar(playerX,620,carColor,1.15);
 }
 
 function updateHud(){
  document.getElementById("score").textContent=Math.floor(score);
  document.getElementById("coins").textContent=coins;
- document.getElementById("speed").textContent=Math.floor(speed*35);
+ document.getElementById("speed").textContent=Math.floor(speed*35)+" km/h";
  document.getElementById("best").textContent=best;
 }
 
 function spawnTraffic(){
  let lane=Math.floor(Math.random()*3);
- let y=205;
- let r=roadAt(y);
+ let y=205,r=roadAt(y);
  let x=r.left+(r.right-r.left)*(lane+.5)/3;
  const colors=["#ff405e","#21c8ff","#ffce3c","#9b72ff","#8cff61"];
  traffic.push({x,y,color:colors[Math.floor(Math.random()*colors.length)],scale:.48});
@@ -350,6 +345,7 @@ function spawnCoin(){
 
 function startGame(){
  carColor=document.getElementById("carChoice").value;
+ track=document.getElementById("trackChoice").value;
  let level=document.getElementById("difficulty").value;
  baseSpeed=level==="easy"?4:level==="hard"?7:5.3;
  speed=baseSpeed;
@@ -360,8 +356,7 @@ function startGame(){
  leftDown=false;rightDown=false;last=0;
  document.getElementById("overlay").classList.add("hidden");
  document.getElementById("message").textContent="Race on! Collect coins and dodge traffic!";
- beep(750,.15);
- updateHud();
+ beep(750,.15);updateHud();
  cancelAnimationFrame(window.gameFrame);
  window.gameFrame=requestAnimationFrame(loop);
 }
@@ -370,18 +365,16 @@ function endGame(){
  running=false;over=true;boosting=false;
  best=Math.max(best,Math.floor(score));
  localStorage.setItem("turboBest",best);
- updateHud();
- beep(130,.4);
- document.getElementById("message").textContent=
-  "💥 CRASH! Score: "+Math.floor(score)+" • Coins: "+coins;
+ updateHud();beep(130,.4);
+ document.getElementById("message").textContent="💥 Crash! Race over!";
  document.getElementById("overlay").classList.remove("hidden");
- document.getElementById("panel").innerHTML=
-  `<h2>💥 RACE OVER!</h2>
-   <p>Your score: <b>${Math.floor(score)}</b></p>
-   <p>Coins collected: 🪙 ${coins}</p>
-   <p>Best score: ${best}</p>
-   <button id="start" onclick="startGame()">↻ RACE AGAIN</button>
-   <p>Can you beat your best score?</p>`;
+ document.getElementById("panel").innerHTML=`
+ <h2>💥 RACE OVER!</h2>
+ <p>Your score: <b>${Math.floor(score)}</b></p>
+ <p>Coins collected: 🪙 ${coins}</p>
+ <p>Best score: ${best}</p>
+ <button id="start" onclick="startGame()">↻ RACE AGAIN</button>
+ <p>Try another track and beat your record!</p>`;
 }
 
 function loop(time){
@@ -389,7 +382,7 @@ function loop(time){
  let dt=last?Math.min((time-last)/16.67,2):1;
  last=time;
 
- boosting=boosting&&nitro>0;
+ if(boosting&&nitro<=0)boosting=false;
  let target=baseSpeed+Math.min(score/400,5);
  if(boosting){speed=target*1.75;nitro=Math.max(0,nitro-.42*dt);}
  else{speed=target;nitro=Math.min(100,nitro+.09*dt);}
@@ -402,55 +395,42 @@ function loop(time){
  roadMove=(roadMove+speed*dt*2.5)%75;
  score+=speed*dt*.12;
 
- spawn+=dt;
- coinSpawn+=dt;
- if(spawn>Math.max(24,65-speed*2.5)){
-  spawnTraffic();spawn=0;
- }
- if(coinSpawn>65){
-  spawnCoin();coinSpawn=0;
- }
+ spawn+=dt;coinSpawn+=dt;
+ if(spawn>Math.max(24,65-speed*2.5)){spawnTraffic();spawn=0;}
+ if(coinSpawn>65){spawnCoin();coinSpawn=0;}
 
  traffic.forEach(t=>{
   t.y+=(speed*1.25+2)*dt;
   t.scale=.48+(t.y/H)*.65;
  });
  traffic=traffic.filter(t=>t.y<780);
-
  pickups.forEach(c=>c.y+=(speed*1.25+2)*dt);
  pickups=pickups.filter(c=>c.y<760);
 
- // Collision detection
  for(const t of traffic){
-  if(Math.abs(t.x-playerX)<43 && Math.abs(t.y-620)<63){
+  if(Math.abs(t.x-playerX)<43&&Math.abs(t.y-620)<63){
    endGame();return;
   }
  }
 
- // Coin collection
  pickups=pickups.filter(c=>{
-  if(Math.abs(c.x-playerX)<38 && Math.abs(c.y-620)<48){
+  if(Math.abs(c.x-playerX)<38&&Math.abs(c.y-620)<48){
    coins++;score+=50;beep(950,.08);
    for(let i=0;i<9;i++){
-    particles.push({x:c.x,y:c.y,
-     color:"#ffd12e",size:3+Math.random()*4,life:25});
+    particles.push({x:c.x,y:c.y,color:"#ffd12e",
+     size:3+Math.random()*4,life:25});
    }
    return false;
   }
   return true;
  });
 
- particles.forEach(p=>{
-  p.y-=2*dt;p.life-=dt;
- });
+ particles.forEach(p=>{p.y-=2*dt;p.life-=dt;});
  particles=particles.filter(p=>p.life>0);
 
- updateHud();
- draw();
-
- // Nitro meter
+ updateHud();draw();
  document.getElementById("nitro").textContent=
-  boosting?"🔥 BOOSTING":("⚡ NITRO "+Math.floor(nitro)+"%");
+ boosting?"🔥 BOOSTING":"⚡ NITRO "+Math.floor(nitro)+"%";
  window.gameFrame=requestAnimationFrame(loop);
 }
 
@@ -462,35 +442,42 @@ function pauseGame(){
   draw();
  }else if(paused){
   paused=false;running=true;last=0;
-  document.querySelector("#actions button").textContent="Ⅱ PAUSE";
+  document.querySelector("#actions button").textContent="Ⅱ PAUSE / RESUME";
   window.gameFrame=requestAnimationFrame(loop);
  }
 }
 
 function showMenu(){
- running=false;paused=false;over=false;
- boosting=false;
+ running=false;paused=false;over=false;boosting=false;
  document.getElementById("overlay").classList.remove("hidden");
  document.getElementById("panel").innerHTML=`
-  <h2>🏁 TURBO RUSH</h2>
-  <p>Choose your car and difficulty</p>
-  <select id="carChoice">
-   <option value="#ff304f">🔥 Red Thunder</option>
-   <option value="#13d9ff">💎 Blue Lightning</option>
-   <option value="#b6ff36">⚡ Green Venom</option>
-   <option value="#ffd12e">🌟 Golden Racer</option>
-   <option value="#d46bff">💜 Purple Storm</option>
-  </select>
-  <select id="difficulty">
-   <option value="easy">Easy Ride</option>
-   <option value="normal" selected>Street Racer</option>
-   <option value="hard">Turbo Expert</option>
-  </select>
-  <button id="start" onclick="startGame()">▶ START RACING</button>
-  <p>Steer, collect coins and activate nitro!</p>`;
- document.querySelector("#actions button").textContent="Ⅱ PAUSE";
+ <h2>🏁 TURBO RUSH</h2>
+ <p>Choose your car, track and difficulty!</p>
+ <p>YOUR RACING CAR</p>
+ <select id="carChoice">
+  <option value="#ff304f">🔥 Red Thunder</option>
+  <option value="#13d9ff">💎 Blue Lightning</option>
+  <option value="#b6ff36">⚡ Green Venom</option>
+  <option value="#ffd12e">🌟 Golden Racer</option>
+  <option value="#d46bff">💜 Purple Storm</option>
+ </select>
+ <p>CHOOSE YOUR TRACK</p>
+ <select id="trackChoice">
+  <option value="city">🌃 Neon City</option>
+  <option value="desert">🏜️ Desert Highway</option>
+  <option value="mountain">🏔️ Mountain Road</option>
+ </select>
+ <p>DIFFICULTY</p>
+ <select id="difficulty">
+  <option value="easy">Easy Ride</option>
+  <option value="normal" selected>Street Racer</option>
+  <option value="hard">Turbo Expert</option>
+ </select>
+ <button id="start" onclick="startGame()">▶ START RACING</button>
+ <p>Dodge traffic, collect coins and use nitro!</p>`;
+ document.querySelector("#actions button").textContent="Ⅱ PAUSE / RESUME";
  document.getElementById("nitro").textContent="⚡ NITRO";
- document.getElementById("message").textContent="Ready for another race?";
+ document.getElementById("message").textContent="Choose your next track!";
  draw();
 }
 
@@ -510,6 +497,7 @@ function setHold(id,which){
   });
  });
 }
+
 setHold("left","left");
 setHold("right","right");
 setHold("nitro","nitro");
