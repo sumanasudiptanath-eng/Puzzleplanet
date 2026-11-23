@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PuzzlePlanet Ludo</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#11152d;color:white;font-family:Arial;text-align:center}
+header{padding:15px;background:#202958}
+h1{color:#ffd54f;margin:5px}
+p{color:#ddd}
+.game{max-width:600px;margin:auto;padding:12px}
+.info{display:flex;justify-content:space-around;gap:6px;flex-wrap:wrap;margin:12px 0}
+.player{padding:9px;border-radius:9px;font-weight:bold}
+.red{background:#e74c3c;color:white}
+.green{background:#159b59;color:white}
+.yellow{background:#f1c40f;color:#222}
+.blue{background:#2879dc;color:white}
+#board{display:grid;grid-template-columns:repeat(15,1fr);width:100%;aspect-ratio:1;border:3px solid white;background:#fff;gap:1px}
+.cell{background:#f5f5f5;position:relative;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;min-width:0;min-height:0}
+.track{background:#fff}
+.base-red{background:#f7b5b5}
+.base-green{background:#a9e9c2}
+.base-yellow{background:#fff0a3}
+.base-blue{background:#b6d7ff}
+.lane-red{background:#ed7777}
+.lane-green{background:#65d99a}
+.lane-yellow{background:#f3d34a}
+.lane-blue{background:#69a9f5}
+.center{background:conic-gradient(#e74c3c 0 25%,#159b59 0 50%,#f1c40f 0 75%,#2879dc 0)}
+.safe{background:#e4e4e4}
+.token{width:42%;height:42%;border-radius:50%;border:1px solid white;color:white;font-size:clamp(7px,2vw,13px);font-weight:bold;cursor:pointer;padding:0;box-shadow:0 1px 3px #333}
+.token:disabled{cursor:default;opacity:1}
+.token.selected{outline:3px solid #ff9800;transform:scale(1.15)}
+.controls{margin:16px 0}
+button{border:0;border-radius:10px;padding:12px 17px;font-size:16px;font-weight:bold;cursor:pointer;margin:4px}
+#roll{background:#ffd54f;color:#222}
+#reset{background:#eee;color:#222}
+#message{background:#252e58;padding:14px;border-radius:10px;min-height:48px;margin:12px 0}
+#dice{font-size:43px;margin:8px}
+small{color:#ccc}
+</style>
+</head>
+<body>
+<header>
+<h1>🌍 PuzzlePlanet</h1>
+<p>🎲 LUDO CHALLENGE 🎲</p>
+</header>
+
+<div class="game">
+<div class="info" id="players"></div>
+
+<div id="board"></div>
+
+<div class="controls">
+<div id="dice">🎲</div>
+<button id="roll" onclick="rollDice()">ROLL DICE</button>
+<button id="reset" onclick="resetGame()">NEW GAME</button>
+</div>
+
+<div id="message">Red's turn! Roll the dice to start.</div>
+
+<small>Get a 6 to bring a token out. Reach home with an exact roll!</small>
+</div>
+
+<script>
+const colors=["red","green","yellow","blue"];
+const names=["Red","Green","Yellow","Blue"];
+const offsets=[0,13,26,39];
+
+const path=[
+[6,1],[6,2],[6,3],[6,4],[6,5],
+[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],
+[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],
+[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
+[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],
+[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],
+[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],
+[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],
+[7,0],[6,0]
+];
+
+const lanes=[
+[[1,7],[2,7],[3,7],[4,7],[5,7],[6,7]],
+[[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]],
+[[13,7],[12,7],[11,7],[10,7],[9,7],[8,7]],
+[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]]
+];
+
+const bases=[
+[[2,2],[2,4],[4,2],[4,4]],
+[[2,10],[2,12],[4,10],[4,12]],
+[[10,10],[10,12],[12,10],[12,12]],
+[[10,2],[10,4],[12,2],[12,4]]
+];
+
+const safe=[0,8,13,21,26,34,39,47];
+let count=4;
+let tokens=[];
+let current=0;
+let dice=0;
+let choices=[];
+let selected=-1;
+let finished=false;
+
+function init(){
+ tokens=Array.from({length:4},()=>Array.from({length:4},()=>-1));
+ current=0;dice=0;choices=[];selected=-1;finished=false;
+ document.getElementById("dice").textContent="🎲";
+ document.getElementById("message").textContent="Red's turn! Roll the dice to start.";
+ render();
+}
+
+function makeBoard(){
+ const board=document.getElementById("board");
+ board.innerHTML="";
+ for(let r=0;r<15;r++){
+  for(let c=0;c<15;c++){
+   let el=document.createElement("div");
+   el.className="cell";
+   el.id="cell-"+r+"-"+c;
+   let inPath=path.some(([y,x])=>y===r&&x===c);
+   if(inPath)el.classList.add("track");
+   if(r<6&&c<6)el.classList.add("base-red");
+   if(r<6&&c>8)el.classList.add("base-green");
+   if(r>8&&c>8)el.classList.add("base-yellow");
+   if(r>8&&c<6)el.classList.add("base-blue");
+   lanes.forEach((lane,p)=>{
+    if(lane.some(([y,x])=>y===r&&x===c))el.classList.add("lane-"+colors[p]);
+   });
+   if(r===7&&c===7)el.classList.add("center");
+   if(inPath&&safe.some(i=>path[i][0]===r&&path[i][1]===c))el.classList.add("safe");
+   board.appendChild(el);
+  }
+ }
+}
+
+function position(p,t){
+ let s=tokens[p][t];
+ if(s===-1)return bases[p][t];
+ if(s<=50)return path[(offsets[p]+s)%52];
+ if(s<=56)return lanes[p][s-51];
+ return [7,7];
+}
+
+function render(){
+ makeBoard();
+ document.getElementById("players").innerHTML=names.map((n,p)=>
+ `<span class="player ${colors[p]}" style="${p>=count?'display:none':''}">${n} ${tokens[p].filter(x=>x===57).length}/4</span>`
+ ).join("");
+
+ for(let p=0;p<count;p++){
+  for(let t=0;t<4;t++){
+   let [r,c]=position(p,t);
+   let cell=document.getElementById("cell-"+r+"-"+c);
+   let b=document.createElement("button");
+   b.className="token "+colors[p]+(selected===p*4+t?" selected":"");
+   b.textContent=t+1;
+   let movable=p===current&&choices.includes(t)&&!finished;
+   b.disabled=!movable;
+   b.onclick=()=>moveToken(p,t);
+   cell.appendChild(b);
+  }
+ }
+}
+
+function rollDice(){
+ if(finished)return;
+ if(dice!==0){
+  document.getElementById("message").textContent="Choose a highlighted token first.";
+  return;
+ }
+ dice=Math.floor(Math.random()*6)+1;
+ document.getElementById("dice").textContent=["","⚀","⚁","⚂","⚃","⚄","⚅"][dice];
+ choices=[];
+ for(let t=0;t<4;t++){
+  let s=tokens[current][t];
+  if(s===57)continue;
+  if(s===-1&&dice===6)choices.push(t);
+  else if(s>=0&&s+dice<=57)choices.push(t);
+ }
+ if(!choices.length){
+  document.getElementById("message").textContent=names[current]+" rolled "+dice+". No possible move.";
+  document.getElementById("roll").textContent="PASS TURN";
+  document.getElementById("roll").onclick=passTurn;
+ }else{
+  document.getElementById("message").textContent=names[current]+" rolled "+dice+". Select a token to move.";
+ }
+ render();
+}
+
+function moveToken(p,t){
+ if(p!==current||!choices.includes(t)||finished)return;
+ let s=tokens[p][t];
+ if(s===-1)tokens[p][t]=0;
+ else tokens[p][t]+=dice;
+
+ let newPos=tokens[p][t];
+ if(newPos<=50){
+  let global=(offsets[p]+newPos)%52;
+  if(!safe.includes(global)){
+   for(let op=0;op<count;op++){
+    if(op===p)continue;
+    for(let ot=0;ot<4;ot++){
+     let os=tokens[op][ot];
+     if(os>=0&&os<=50&&(offsets[op]+os)%52===global){
+      tokens[op][ot]=-1;
+     }
+    }
+   }
+  }
+ }
+
+ let won=tokens[p].every(x=>x===57);
+ dice=0;choices=[];selected=-1;
+ document.getElementById("roll").textContent="ROLL DICE";
+ document.getElementById("roll").onclick=rollDice;
+
+ if(won){
+  finished=true;
+  document.getElementById("message").textContent="🏆 "+names[p]+" WINS THE GAME!";
+ }else{
+  document.getElementById("message").textContent=names[p]+" moved token "+(t+1)+"!";
+  if(document.getElementById("message").textContent&&Math.random()<0){}
+  if(dice===0){
+   // A six grants another turn.
+   // The previous dice value is saved below before resetting.
+  }
+ }
+ render();
+}
+
+function passTurn(){
+ dice=0;choices=[];selected=-1;
+ nextPlayer();
+}
+
+function nextPlayer(){
+ current=(current+1)%count;
+ while(current>=count)current=0;
+ document.getElementById("roll").textContent="ROLL DICE";
+ document.getElementById("roll").onclick=rollDice;
+ document.getElementById("dice").textContent="🎲";
+ document.getElementById("message").textContent=names[current]+"'s turn! Roll the dice.";
+ render();
+}
+
+function resetGame(){
+ count=4;
+ init();
+}
+
+init();
+</script>
+</body>
+</html>
