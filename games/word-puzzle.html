@@ -3,529 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#100d27">
-<title>PuzzlePlanet - Word Master</title>
+<title>PuzzlePlanet - Word Puzzle</title>
 <style>
-:root{
-  --bg:#100d27;
-  --panel:#1d1940;
-  --panel2:#282253;
-  --purple:#9b78ff;
-  --pink:#ff70bd;
-  --cyan:#56e6e5;
-  --gold:#ffd66b;
-  --text:#f8f5ff;
-  --muted:#aaa4ca;
-  --green:#67e8a5;
-}
 *{box-sizing:border-box}
 body{
-  margin:0;
-  min-height:100vh;
-  background:
-  radial-gradient(circle at 10% 5%,#35245e 0,transparent 35%),
-  radial-gradient(circle at 95% 35%,#25265d 0,transparent 30%),
-  var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+ margin:0;min-height:100vh;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#17133d,#34216b,#126b85);
+ color:white;text-align:center;padding:20px 14px;
 }
-button{font:inherit;cursor:pointer}
-.app{max-width:850px;margin:auto;padding:18px 15px 45px}
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;margin-bottom:22px
+.container{max-width:480px;margin:auto}
+h1{font-size:32px;margin:15px 0 5px}
+.sub{color:#d6d3ff;margin-bottom:25px}
+.card{
+ background:#ffffff13;border:1px solid #ffffff35;
+ border-radius:24px;padding:25px 18px;
+ box-shadow:0 12px 35px #0005;
 }
-.brand{display:flex;align-items:center;gap:10px}
-.logo{
-  width:48px;height:48px;border-radius:16px;
-  display:grid;place-items:center;font-size:27px;
-  background:linear-gradient(135deg,#a17aff,#ff70bd);
-  box-shadow:0 7px 25px #9b78ff55
+.stats{display:flex;justify-content:space-around;margin-bottom:25px}
+.stat{background:#ffffff18;padding:12px;border-radius:14px;min-width:90px}
+.stat strong{display:block;font-size:23px;color:#ffd66b}
+.scramble{
+ font-size:35px;letter-spacing:7px;font-weight:bold;
+ color:#ffe17b;background:#ffffff15;
+ padding:25px 8px;border-radius:17px;margin:18px 0;
 }
-.brand h1{font-size:19px;margin:0;letter-spacing:.3px}
-.brand small{color:var(--muted);font-size:11px}
-.coins{
-  background:#29234d;border:1px solid #55478b;
-  border-radius:30px;padding:9px 13px;
-  font-weight:800;color:var(--gold);white-space:nowrap
+input{
+ width:100%;padding:16px;border-radius:13px;
+ border:2px solid #aaa;background:white;
+ font-size:19px;text-align:center;
+ outline:none;text-transform:uppercase;
 }
-.hero{
-  padding:25px 22px;border-radius:25px;
-  background:linear-gradient(120deg,#5636a5,#a44e9e 65%,#ed6baf);
-  box-shadow:0 15px 40px #0004;
-  position:relative;overflow:hidden;margin-bottom:19px
+button{
+ border:0;border-radius:13px;padding:14px 20px;
+ font-size:16px;font-weight:bold;cursor:pointer;
+ margin:7px;
 }
-.hero:after{
-  content:"✦";position:absolute;right:24px;top:10px;
-  font-size:85px;color:#ffffff22
-}
-.hero .eyebrow{font-size:11px;letter-spacing:2px;font-weight:800}
-.hero h2{font-size:29px;margin:7px 0}
-.hero p{margin:0;color:#f5eaff;max-width:460px;font-size:14px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:17px 0}
-.stat{
-  background:#201b43;border:1px solid #393064;
-  border-radius:16px;padding:13px 8px;text-align:center
-}
-.stat strong{display:block;font-size:21px;color:var(--cyan)}
-.stat span{font-size:11px;color:var(--muted)}
-.section-title{font-size:17px;margin:24px 0 12px}
-.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-.mode{
-  border:1px solid #4a3e79;border-radius:19px;
-  background:linear-gradient(145deg,#282253,#1b183b);
-  padding:15px 10px;text-align:left;color:white;
-  transition:.2s;min-height:137px
-}
-.mode:active{transform:scale(.97)}
-.mode.active{border:2px solid var(--pink);background:linear-gradient(145deg,#493477,#29204d)}
-.mode .emoji{font-size:29px}
-.mode b{display:block;margin-top:8px;font-size:13px}
-.mode small{color:var(--muted);font-size:10px}
-.game-panel{
-  margin-top:17px;background:#1b1739;
-  border:1px solid #39305f;border-radius:23px;
-  padding:18px;box-shadow:0 12px 30px #0003
-}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.panel-head h3{margin:0;font-size:19px}
-.tag{
-  font-size:10px;padding:6px 10px;border-radius:20px;
-  background:#3b2d67;color:#d8caff;font-weight:800
-}
-.description{font-size:13px;color:var(--muted);margin:7px 0 15px}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
-select{
-  background:#29234d;color:white;border:1px solid #55478b;
-  padding:10px 12px;border-radius:11px;outline:none
-}
-.btn{
-  border:0;border-radius:12px;padding:11px 15px;
-  color:#17112e;font-weight:800;
-  background:linear-gradient(135deg,#b69aff,#ff8bc9);
-  box-shadow:0 5px 15px #a17aff33
-}
-.btn.secondary{
-  color:white;background:#342c60;
-  border:1px solid #51447e;box-shadow:none
-}
-.btn.gold{background:linear-gradient(135deg,#ffe18c,#ffb94f)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.message{
-  min-height:43px;padding:11px 13px;border-radius:12px;
-  background:#29234d;color:#d8d0f5;font-size:13px;
-  margin:13px 0;text-align:center
-}
-.message.good{color:var(--green);background:#173b39}
-.message.bad{color:#ff9aaf;background:#48243b}
-.word-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
-.word-chip{
-  border-radius:20px;padding:6px 10px;
-  background:#302956;color:#eee6ff;font-size:12px;font-weight:700
-}
-.word-chip.found{background:#16483e;color:#8df0bd;text-decoration:line-through}
-.grid-wrap{display:flex;justify-content:center;overflow-x:auto;padding:8px 0}
-.letter-grid{
-  display:grid;gap:5px;
-  width:min(100%,430px);
-  grid-template-columns:repeat(8,minmax(0,1fr));
-  touch-action:manipulation
-}
-.cell{
-  aspect-ratio:1;border:1px solid #51477c;border-radius:9px;
-  background:linear-gradient(145deg,#373064,#27214f);
-  color:white;font-size:clamp(13px,4vw,19px);
-  font-weight:900;padding:0;min-width:0;
-  transition:.12s
-}
-.cell.selected{background:#7957d7;border-color:#c8adff;transform:scale(.96)}
-.cell.found{background:linear-gradient(145deg,#176c60,#1b9b7c);border-color:#6af0bd;color:white}
-.scramble-word{
-  text-align:center;font-size:clamp(28px,8vw,43px);
-  letter-spacing:9px;font-weight:1000;
-  color:var(--gold);padding:20px 5px;
-  text-shadow:0 4px 25px #ffc85c44
-}
-.answer-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.answer-row input{
-  width:min(100%,260px);padding:13px 14px;
-  border-radius:12px;border:1px solid #61528d;
-  background:#29234d;color:white;font-size:18px;
-  text-align:center;text-transform:uppercase;outline:none
-}
-.daily-card{
-  border:1px solid #66518e;border-radius:17px;
-  padding:15px;background:linear-gradient(130deg,#35295f,#27204a);
-  text-align:center
-}
-.daily-date{font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:1px}
-.daily-emoji{font-size:36px;margin:10px}
-.daily-hint{font-size:14px;color:#ddd4ff}
-.progress{
-  height:8px;background:#39315e;border-radius:20px;overflow:hidden;margin-top:9px
-}
-.progress div{height:100%;width:0;background:linear-gradient(90deg,#57e4d6,#a68aff);transition:.3s}
-footer{text-align:center;color:#777194;font-size:11px;margin-top:25px}
-.hidden{display:none!important}
-@media(max-width:500px){
- .app{padding:13px 11px 35px}
- .hero{padding:21px 17px}
- .hero h2{font-size:25px}
- .modes{gap:7px}
- .mode{padding:12px 8px;min-height:128px}
- .game-panel{padding:14px}
- .cell{border-radius:7px;gap:3px}
-}
+.check{background:#ffca55;color:#29204c}
+.hint{background:#74e2d0;color:#123c43}
+.next{background:#a78bfa;color:white}
+.message{min-height:28px;font-weight:bold;margin:16px 0}
+.back{background:#ffffff20;color:white;margin-top:20px}
 </style>
 </head>
 <body>
-<div class="app">
-<header>
-  <div class="brand">
-    <div class="logo">🧩</div>
-    <div>
-      <h1>PuzzlePlanet</h1>
-      <small>WORD MASTER • THINK. PLAY. WIN.</small>
-    </div>
-  </div>
-  <div class="coins">🪙 <span id="coinCount">0</span></div>
-</header>
+<div class="container">
+<h1>🌍 PuzzlePlanet</h1>
+<div class="sub">WORD PUZZLE CHALLENGE ✨</div>
 
-<section class="hero">
-  <div class="eyebrow">WELCOME TO THE WORD ZONE</div>
-  <h2>Train Your Brain! ✨</h2>
-  <p>Discover words, beat challenges and collect rewards. Your next brain adventure starts here!</p>
-</section>
-
+<div class="card">
 <div class="stats">
-  <div class="stat"><strong id="level">1</strong><span>YOUR LEVEL</span></div>
-  <div class="stat"><strong id="score">0</strong><span>TOTAL SCORE</span></div>
-  <div class="stat"><strong id="solved">0</strong><span>PUZZLES SOLVED</span></div>
+ <div class="stat">SCORE<strong id="score">0</strong></div>
+ <div class="stat">LEVEL<strong id="level">1</strong></div>
+ <div class="stat">LIVES<strong id="lives">❤️❤️❤️</strong></div>
 </div>
 
-<h3 class="section-title">🎮 Choose Your Game Mode</h3>
-<div class="modes">
-  <button class="mode active" data-mode="search">
-    <div class="emoji">🔎</div><b>Word Search</b><small>Find hidden words</small>
-  </button>
-  <button class="mode" data-mode="scramble">
-    <div class="emoji">🔤</div><b>Word Scramble</b><small>Unscramble letters</small>
-  </button>
-  <button class="mode" data-mode="daily">
-    <div class="emoji">🌟</div><b>Daily Challenge</b><small>One word every day</small>
-  </button>
+<p>Unscramble the letters!</p>
+<div class="scramble" id="scramble">PLANET</div>
+
+<input id="answer" placeholder="Type your answer" autocomplete="off">
+
+<div class="message" id="message">You can do it! 🚀</div>
+
+<button class="check" onclick="checkAnswer()">CHECK ANSWER ✓</button>
+<br>
+<button class="hint" onclick="showHint()">💡 HINT</button>
+<button class="next" onclick="nextWord()">SKIP ➜</button>
 </div>
 
-<section class="game-panel">
-  <div class="panel-head">
-    <h3 id="gameTitle">🔎 Word Search</h3>
-    <span class="tag" id="modeTag">BRAIN TRAINING</span>
-  </div>
-  <p class="description" id="gameDescription">Find all the hidden words in the letter grid. Tap the first and last letters of a word.</p>
-
-  <div class="controls" id="difficultyControls">
-    <select id="difficulty" aria-label="Difficulty">
-      <option value="easy">Easy</option>
-      <option value="medium">Medium</option>
-      <option value="hard">Hard</option>
-    </select>
-    <button class="btn secondary" id="newGame">↻ New Puzzle</button>
-  </div>
-
-  <div id="searchArea">
-    <div class="word-list" id="wordList"></div>
-    <div class="grid-wrap"><div class="letter-grid" id="letterGrid"></div></div>
-  </div>
-
-  <div id="scrambleArea" class="hidden">
-    <div class="scramble-word" id="scrambledWord">PLANET</div>
-    <div class="daily-hint" id="scrambleHint" style="text-align:center;margin-bottom:15px">Hint appears here</div>
-    <div class="answer-row">
-      <input id="scrambleAnswer" placeholder="YOUR ANSWER" maxlength="14" autocomplete="off">
-      <button class="btn" id="checkScramble">CHECK</button>
-    </div>
-    <div class="controls" style="justify-content:center">
-      <button class="btn secondary" id="scrambleHintBtn">💡 Hint (5 🪙)</button>
-      <button class="btn secondary" id="nextScramble">Next Word →</button>
-    </div>
-  </div>
-
-  <div id="dailyArea" class="hidden">
-    <div class="daily-card">
-      <div class="daily-date" id="dailyDate">TODAY'S CHALLENGE</div>
-      <div class="daily-emoji">🌠</div>
-      <h2 style="margin:0 0 8px">Guess the Word</h2>
-      <p class="daily-hint" id="dailyHint">Your daily clue is waiting!</p>
-      <div class="scramble-word" id="dailyBlanks">_ _ _ _ _</div>
-      <div class="answer-row">
-        <input id="dailyAnswer" placeholder="TYPE YOUR GUESS" maxlength="14" autocomplete="off">
-        <button class="btn gold" id="checkDaily">SUBMIT</button>
-      </div>
-      <div class="controls" style="justify-content:center">
-        <button class="btn secondary" id="dailyHintBtn">💡 Reveal a letter (5 🪙)</button>
-      </div>
-      <p id="dailyStatus" class="daily-hint"></p>
-    </div>
-  </div>
-
-  <div class="message" id="message" aria-live="polite">Ready? Let's play! 🚀</div>
-  <div class="progress"><div id="progressBar"></div></div>
-  <p style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:0" id="progressText">Complete puzzles to earn coins and level up.</p>
-</section>
-
-<footer>PUZZLEPLANET © WORD MASTER • PLAY SMART, HAVE FUN 💜</footer>
+<button class="back" onclick="location.href='../index.html'">← BACK TO GAMES</button>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-const bank = [
- {w:"PLANET",h:"A world that travels around a star"},
- {w:"GARDEN",h:"A place where flowers grow"},
- {w:"CASTLE",h:"A royal stone building"},
- {w:"PUZZLE",h:"A brain-teasing game"},
- {w:"ORANGE",h:"A juicy fruit and a colour"},
- {w:"JUNGLE",h:"A wild forest full of life"},
- {w:"ROCKET",h:"A vehicle that travels into space"},
- {w:"BRIDGE",h:"A structure built over water"},
- {w:"SILVER",h:"A shiny precious metal"},
- {w:"MONKEY",h:"An animal that loves to climb"},
- {w:"RAINBOW",h:"Colourful arc seen after rain"},
- {w:"DIAMOND",h:"A very hard precious stone"},
- {w:"SUNSHINE",h:"Light that comes from the sun"},
- {w:"ELEPHANT",h:"A huge animal with a trunk"},
- {w:"NOTEBOOK",h:"Something you write notes in"},
- {w:"TREASURE",h:"Something valuable hidden away"},
- {w:"MOUNTAIN",h:"A very high natural landform"},
- {w:"AIRPLANE",h:"A machine that flies in the sky"}
+const words=[
+["PLANET","A world in space"],
+["GARDEN","A place where flowers grow"],
+["PUZZLE","A game that tests your brain"],
+["RAINBOW","Seven colours in the sky"],
+["JUNGLE","A forest full of trees"],
+["ORANGE","A juicy fruit"],
+["CASTLE","A king or queen may live here"],
+["MONKEY","An animal that loves climbing"],
+["SUNSHINE","Light from the sun"],
+["DIAMOND","A precious sparkling stone"],
+["BUTTERFLY","A colourful flying insect"],
+["ELEPHANT","A very large animal"],
+["CHOCOLATE","A sweet treat"],
+["RAINBOW","A colourful arc after rain"],
+["TREASURE","Something valuable and hidden"]
 ];
-let data = {};
-try{data=JSON.parse(localStorage.getItem("ppWordMaster")||"{}")}catch(e){data={}}
-let coins=Number(data.coins)||0,score=Number(data.score)||0,solved=Number(data.solved)||0;
-let level=Number(data.level)||1;
-let mode="search",words=[],found=[],grid=[],first=null,activeWord=null;
-let scramble=null,daily=null,dailySolved=false,dailyRevealed=0;
 
-function save(){
- localStorage.setItem("ppWordMaster",JSON.stringify({coins,score,solved,level,dailyDate:daily?.date,dailySolved}));
- updateStats();
-}
-function updateStats(){
- $("coinCount").textContent=coins;
- $("score").textContent=score;
- $("solved").textContent=solved;
- $("level").textContent=level;
-}
-function msg(text,type=""){
- $("message").textContent=text;
- $("message").className="message "+type;
-}
-function reward(points){
- score+=points;coins+=5;solved++;
- level=Math.floor(score/100)+1;
- save();
-}
-function spend(n){
- if(coins<n){msg("Not enough coins! Solve puzzles to earn more. 🪙","bad");return false}
- coins-=n;save();return true;
-}
-function shuffle(s){
- return s.split("").sort(()=>Math.random()-.5).join("");
-}
-function chooseWord(exclude){
- let list=bank.filter(x=>!exclude.includes(x.w));
- if(!list.length)list=bank;
- return list[Math.floor(Math.random()*list.length)];
-}
-function setMode(m){
- mode=m;first=null;
- document.querySelectorAll(".mode").forEach(b=>b.classList.toggle("active",b.dataset.mode===m));
- $("searchArea").classList.toggle("hidden",m!=="search");
- $("scrambleArea").classList.toggle("hidden",m!=="scramble");
- $("dailyArea").classList.toggle("hidden",m!=="daily");
- $("difficultyControls").classList.toggle("hidden",m==="daily");
- if(m==="search"){
-  $("gameTitle").textContent="🔎 Word Search";
-  $("modeTag").textContent="FIND THE WORDS";
-  $("gameDescription").textContent="Tap the first and last letters of each hidden word. Words go across or down.";
-  newSearch();
- }else if(m==="scramble"){
-  $("gameTitle").textContent="🔤 Word Scramble";
-  $("modeTag").textContent="UNMIX THE LETTERS";
-  $("gameDescription").textContent="Put the mixed-up letters in the correct order and discover the word.";
-  newScramble();
- }else{
-  $("gameTitle").textContent="🌟 Daily Challenge";
-  $("modeTag").textContent="DAILY SPECIAL";
-  $("gameDescription").textContent="A special word challenge for today. Can you solve it?";
-  setupDaily();
+let index=0,score=0,lives=3,level=1,usedHint=false;
+
+function shuffle(word){
+ let a=word.split("");
+ for(let i=a.length-1;i>0;i--){
+  let j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
  }
+ let result=a.join("");
+ if(result===word && word.length>1){
+  result=result.slice(1)+result[0];
+ }
+ return result;
 }
-document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
 
-function newSearch(){
- let diff=$("difficulty").value;
- let size=diff==="easy"?8:diff==="medium"?9:10;
- let count=diff==="easy"?3:diff==="medium"?4:5;
- grid=Array.from({length:size},()=>Array(size).fill(""));
- words=[];found=[];first=null;
- let pool=[...bank].sort(()=>Math.random()-.5);
- let selected=pool.slice(0,count);
- selected.forEach(item=>{
-  let placed=false;
-  for(let tries=0;tries<300&&!placed;tries++){
-   let vertical=Math.random()<.5;
-   let r=Math.floor(Math.random()*(vertical?size-item.w.length+1:size));
-   let c=Math.floor(Math.random()*(vertical?size:size-item.w.length+1));
-   let ok=true;
-   for(let i=0;i<item.w.length;i++){
-    let rr=r+(vertical?i:0),cc=c+(vertical?0:i);
-    if(grid[rr][cc]&&grid[rr][cc]!==item.w[i])ok=false;
-   }
-   if(ok){
-    for(let i=0;i<item.w.length;i++)grid[r+(vertical?i:0)][c+(vertical?0:i)]=item.w[i];
-    placed=true;
-   }
-  }
-  if(placed)words.push(item.w);
- });
- for(let r=0;r<size;r++)for(let c=0;c<size;c++)if(!grid[r][c])grid[r][c]="ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
- renderSearch();
- msg("Find all "+words.length+" hidden words! 🔍");
- updateProgress();
+function loadWord(){
+ document.getElementById("scramble").textContent=shuffle(words[index][0]);
+ document.getElementById("answer").value="";
+ document.getElementById("message").textContent="You can do it! 🚀";
+ document.getElementById("score").textContent=score;
+ document.getElementById("level").textContent=level;
+ document.getElementById("lives").textContent="❤️".repeat(lives);
+ usedHint=false;
 }
-function renderSearch(){
- $("letterGrid").style.gridTemplateColumns=`repeat(${grid.length},minmax(0,1fr))`;
- $("letterGrid").innerHTML="";
- grid.forEach((row,r)=>row.forEach((letter,c)=>{
-  let b=document.createElement("button");
-  b.className="cell";b.textContent=letter;
-  b.dataset.r=r;b.dataset.c=c;
-  b.addEventListener("click",()=>pickCell(r,c,b));
-  $("letterGrid").appendChild(b);
- }));
- $("wordList").innerHTML="";
- words.forEach(w=>{
-  let chip=document.createElement("span");
-  chip.className="word-chip"+(found.includes(w)?" found":"");
-  chip.textContent=(found.includes(w)?"✓ ":"")+w;
-  $("wordList").appendChild(chip);
- });
-}
-function pickCell(r,c,button){
- if(found.length===words.length)return;
- if(!first){
-  first={r,c};button.classList.add("selected");msg("Now tap the last letter of the word.");
+
+function checkAnswer(){
+ if(lives<=0)return;
+ let answer=document.getElementById("answer").value.trim().toUpperCase();
+ if(!answer){
+  document.getElementById("message").textContent="Please enter your answer!";
   return;
  }
- let dr=r-first.r,dc=c-first.c;
- if(first.r===r&&first.c===c){
-  first=null;renderSearch();msg("Selection cleared.");return;
- }
- let valid=(dr===0||dc===0)&&Math.max(Math.abs(dr),Math.abs(dc))<grid.length;
- if(!valid){first=null;renderSearch();msg("Choose a straight horizontal or vertical word.","bad");return}
- let len=Math.max(Math.abs(dr),Math.abs(dc))+1;
- let letters="";
- for(let i=0;i<len;i++)letters+=grid[first.r+Math.sign(dr)*i][first.c+Math.sign(dc)*i];
- let reverse=letters.split("").reverse().join("");
- let match=words.find(w=>(w===letters||w===reverse)&&!found.includes(w));
- if(match){
-  found.push(match);
-  let cells=$("letterGrid").querySelectorAll(".cell");
-  for(let i=0;i<len;i++){
-   let rr=first.r+Math.sign(dr)*i,cc=first.c+Math.sign(dc)*i;
-   cells[rr*grid.length+cc].classList.add("found");
-  }
-  renderWordChips();
-  msg("Brilliant! "+match+" found! 🎉","good");
-  if(found.length===words.length){
-   reward(30);msg("Amazing! You completed the Word Search! +30 points and 5 coins! 🏆","good");
-  }
+ if(answer===words[index][0]){
+  score+=usedHint?5:10;
+  document.getElementById("score").textContent=score;
+  document.getElementById("message").textContent="🎉 Correct! Amazing!";
+  document.getElementById("answer").disabled=true;
+  setTimeout(nextWord,1100);
  }else{
-  msg("Not a hidden word. Try again!","bad");
+  lives--;
+  document.getElementById("lives").textContent="❤️".repeat(lives);
+  if(lives===0){
+   document.getElementById("message").textContent="Game Over! Tap Restart to play again.";
+  }else{
+   document.getElementById("message").textContent="Not quite! Try again ❤️";
+  }
  }
- first=null;updateProgress();
-}
-function renderWordChips(){
- document.querySelectorAll(".word-chip").forEach(chip=>{
-  let w=chip.textContent.replace("✓ ","");
-  if(found.includes(w)){chip.classList.add("found");chip.textContent="✓ "+w}
- });
-}
-function updateProgress(){
- let total=mode==="search"?words.length:1;
- let done=mode==="search"?found.length:0;
- if(mode==="scramble")done=scramble?.done?1:0;
- if(mode==="daily")done=dailySolved?1:0;
- $("progressBar").style.width=(total?done/total*100:0)+"%";
- $("progressText").textContent=done+" / "+total+" completed";
 }
 
-$("newGame").addEventListener("click",()=>{
- if(mode==="search")newSearch();
- else if(mode==="scramble")newScramble();
-});
-$("difficulty").addEventListener("change",()=>{if(mode==="search")newSearch();else if(mode==="scramble")newScramble()});
+function showHint(){
+ usedHint=true;
+ document.getElementById("message").textContent="💡 "+words[index][1];
+}
 
-function newScramble(){
- let item=chooseWord([]);
- let mixed=item.w;
- while(mixed===item.w&&item.w.length>2)mixed=shuffle(item.w);
- scramble={...item,mixed,done:false,hintUsed:false};
- $("scrambledWord").textContent=mixed.split("").join(" ");
- $("scrambleHint").textContent="💡 "+item.h;
- $("scrambleAnswer").value="";
- $("scrambleAnswer").disabled=false;
- $("checkScramble").disabled=false;
- msg("Unscramble the letters to find the word!");
- updateProgress();
+function nextWord(){
+ if(lives<=0){
+  restart();
+  return;
+ }
+ index++;
+ if(index>=words.length){
+  document.getElementById("message").textContent="🏆 YOU WON! Fantastic!";
+  document.getElementById("scramble").textContent="🏆";
+  document.getElementById("answer").disabled=true;
+  return;
+ }
+ level++;
+ document.getElementById("answer").disabled=false;
+ loadWord();
 }
-function checkScramble(){
- if(!scramble||scramble.done)return;
- if($("scrambleAnswer").value.trim().toUpperCase()===scramble.w){
-  scramble.done=true;reward(20);
-  $("scrambleAnswer").disabled=true;$("checkScramble").disabled=true;
-  msg("Correct! You are a Word Master! +20 points and 5 coins! 🎉","good");
- }else msg("Oops! Not quite. Give it another try!","bad");
- updateProgress();
+
+function restart(){
+ index=0;score=0;lives=3;level=1;
+ document.getElementById("answer").disabled=false;
+ loadWord();
 }
-$("checkScramble").addEventListener("click",checkScramble);
-$("scrambleAnswer").addEventListener("keydown",e=>{if(e.key==="Enter")checkScramble()});
-$("nextScramble").addEventListener("click",newScramble);
-$("scrambleHintBtn").addEventListener("click",()=>{
- if(!scramble||scramble.done)return;
- if(spend(5)){msg("Hint: The word starts with "+scramble.w[0]+". 💡")}
+
+document.getElementById("answer").addEventListener("keydown",function(e){
+ if(e.key==="Enter")checkAnswer();
 });
 
-function dateKey(){
- let d=new Date();
- return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function setupDaily(){
- let date=dateKey();
- let index=Math.floor(new Date(date+"T00:00:00").getTime()/86400000)%bank.length;
- daily={...bank[index],date};
- dailySolved=data.dailyDate===date&&data.dailySolved===true;
- dailyRevealed=0;
- $("dailyDate").textContent="TODAY • "+date;
- $("dailyHint").textContent="Clue: "+daily.h;
- $("dailyAnswer").value="";
- $("dailyAnswer").disabled=dailySolved;
- $("checkDaily").disabled=dailySolved;
- showDailyBlanks();
- $("dailyStatus").textContent=dailySolved?"Today's challenge completed! Come back tomorrow. 🏆":"Solve today's word to win 15 points and 5 coins.";
- msg(dailySolved?"You have already completed today's challenge.":"Your daily word is ready. Good luck!");
- updateProgress();
-}
-function showDailyBlanks(){
- let out="";
- for(let i=0;i<daily.w.length;i++)out+=(i<dailyRevealed?daily.w[i]:"_")+" ";
- $("dailyBlanks").textContent=out.trim();
-}
-function checkDaily(){
- if(dailySolved)return;
- if($("dailyAnswer").value.trim().toUpperCase()===daily.w){
-  dailySolved=true;data.dailyDate=daily.date;data.dailySolved=true;
-  score+=15;coins+=5;solved++;level=Math.floor(score/100)+1;
-  save();
-  $("dailyAnswer").disabled=true;$("checkDaily").disabled=true;
-  $("dailyStatus").textContent="You did it! Daily c
+loadWord();
+</script>
+</body>
+</html>
