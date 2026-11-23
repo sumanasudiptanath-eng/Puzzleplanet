@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzlePlanet Games</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#101044,#29216d);
+ color:white;
+ text-align:center;
+}
+header{padding:35px 15px 20px}
+header h1{font-size:34px;margin:0;color:#ffd54f}
+header p{color:#ddd;font-size:16px}
+.container{
+ max-width:1000px;
+ margin:auto;
+ padding:15px;
+}
+.games{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:16px;
+}
+.game{
+ background:white;
+ color:#222;
+ border-radius:18px;
+ padding:25px 10px;
+ text-decoration:none;
+ box-shadow:0 5px 15px #0005;
+ transition:.2s;
+}
+.game:active{transform:scale(.96)}
+.emoji{font-size:55px}
+.game h2{margin:12px 0 5px;font-size:21px}
+.game p{font-size:13px;color:#666}
+footer{padding:30px;color:#ccc;font-size:13px}
+@media(min-width:650px){
+ .games{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🌍 PuzzlePlanet</h1>
+<p>Play • Think • Challenge Yourself!</p>
+</header>
+
+<div class="container">
+<div class="games">
+
+<a class="game" href="ludo.html">
+<div class="emoji">🎲</div>
+<h2>Ludo</h2>
+<p>Roll the dice and win!</p>
+</a>
+
+<a class="game" href="car-racing.html">
+<div class="emoji">🏎️</div>
+<h2>Car Racing</h2>
+<p>Race to the finish!</p>
+</a>
+
+<a class="game" href="word-puzzle.html">
+<div class="emoji">🔤</div>
+<h2>Word Puzzle</h2>
+<p>Test your vocabulary!</p>
+</a>
+
+<a class="game" href="chess.html">
+<div class="emoji">♟️</div>
+<h2>Chess</h2>
+<p>Challenge your mind!</p>
+</a>
+
+<a class="game" href="carrom.html">
+<div class="emoji">🎯</div>
+<h2>Carrom</h2>
+<p>Take your best shot!</p>
+</a>
+
+<a class="game" href="block-puzzle.html">
+<div class="emoji">🧩</div>
+<h2>Block Puzzle</h2>
+<p>Fit the blocks!</p>
+</a>
+
+</div>
+</div>
+
+<footer>
+<p>© 2026 PuzzlePlanet Games</p>
+<p>Play Anytime • Anywhere</p>
+</footer>
+
+</body>
+</html>
