@@ -2,208 +2,287 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>PuzzlePlanet Car Racing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzlePlanet - Car Racing</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#11152d;color:white;font-family:Arial;text-align:center;touch-action:pan-y}
-header{padding:15px;background:#202958}
-h1{margin:5px;color:#ffd54f;font-size:26px}
-.game{max-width:480px;margin:auto;padding:12px}
-.stats{display:flex;justify-content:space-around;margin:10px 0;font-size:17px;font-weight:bold}
-canvas{display:block;width:100%;max-width:400px;height:auto;margin:auto;background:#278b42;border:4px solid white;border-radius:8px;touch-action:none}
-.controls{display:flex;justify-content:center;gap:35px;margin:18px}
-button{border:0;border-radius:12px;padding:15px 25px;font-size:22px;font-weight:bold;background:#ffd54f;color:#222;cursor:pointer;touch-action:none}
-#start{font-size:17px;background:#28c76f}
-#message{padding:12px;background:#252e58;border-radius:10px;margin:10px 0;min-height:42px}
+body{
+  margin:0;background:#101827;color:white;
+  font-family:Arial,sans-serif;text-align:center;
+}
+h1{color:#ffd43b;margin:18px 0 8px}
+.panel{
+  max-width:440px;margin:12px auto;padding:15px;
+  background:#202d42;border-radius:15px;
+}
+select,button{
+  padding:12px;margin:6px;border:0;border-radius:9px;
+  font-size:16px;font-weight:bold;
+}
+select{width:90%;background:white;color:#111}
+button{background:#ffd43b;color:#111;cursor:pointer}
+#startBtn{background:#20d878;font-size:20px;padding:14px 35px}
+#game{
+  display:block;width:min(94vw,400px);height:auto;
+  margin:10px auto;background:#333;border:4px solid white;
+  border-radius:10px;
+}
+#controls button{font-size:25px;width:105px;background:#42b9ff}
+#status{font-size:17px;line-height:1.6}
+.hidden{display:none}
 </style>
 </head>
 <body>
-<header>
-<h1>🌍 PuzzlePlanet</h1>
-<p>🏎️ CAR RACING CHALLENGE</p>
-</header>
 
-<div class="game">
-<div class="stats">
-<span>Score: <span id="score">0</span></span>
-<span>Speed: <span id="speed">1</span></span>
+<h1>🏁 PUZZLEPLANET</h1>
+<h2>🚗 CAR RACING</h2>
+
+<div class="panel" id="menu">
+  <h2>Ready to Race?</h2>
+  <p>Select your settings</p>
+
+  <label>Difficulty</label><br>
+  <select id="difficulty">
+    <option value="easy">Easy</option>
+    <option value="medium" selected>Medium</option>
+    <option value="hard">Hard</option>
+  </select><br>
+
+  <label>Choose Your Car</label><br>
+  <select id="carColor">
+    <option value="#ff3333">Red Racer</option>
+    <option value="#2196ff">Blue Racer</option>
+    <option value="#20d878">Green Racer</option>
+    <option value="#ffcc00">Yellow Racer</option>
+    <option value="#d45cff">Purple Racer</option>
+  </select><br>
+
+  <button id="startBtn" onclick="startGame()">▶ START GAME</button>
 </div>
 
-<canvas id="game" width="400" height="600"></canvas>
+<div class="panel">
+  <div id="status">
+    Score: <span id="score">0</span> |
+    Best: <span id="best">0</span>
+  </div>
+  <canvas id="game" width="400" height="600"></canvas>
 
-<div id="message">Press START to begin racing!</div>
+  <div id="controls">
+    <button id="leftBtn">⬅ LEFT</button>
+    <button id="rightBtn">RIGHT ➡</button>
+  </div>
 
-<button id="start" onclick="startGame()">START RACE</button>
-
-<div class="controls">
-<button id="left">⬅️</button>
-<button id="right">➡️</button>
-</div>
-<p><small>Use the arrow buttons to avoid other cars!</small></p>
+  <button id="pauseBtn" onclick="pauseGame()">⏸ PAUSE</button>
+  <button onclick="restartGame()">↻ RESTART</button>
+  <p id="message">Press START GAME to begin!</p>
 </div>
 
 <script>
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
-const W=400,H=600;
 
-let player={x:180,y:490,w:42,h:75};
+let player={x:180,y:500,w:40,h:70};
 let enemies=[];
-let score=0,speed=3,roadLine=0;
-let running=false,animation=0;
-let left=false,right=false;
-let lastSpawn=0,lastTime=0;
+let score=0;
+let best=Number(localStorage.getItem("ppRaceBest")||0);
+let speed=3;
+let running=false;
+let paused=false;
+let gameOver=false;
+let animation;
+let lastTime=0;
+let spawnTimer=0;
+let roadOffset=0;
+let moveLeft=false;
+let moveRight=false;
+let car="#ff3333";
 
-const lanes=[95,180,265];
-const colors=["#ff3333","#ffcc00","#9b59b6","#eeeeee","#00c9db"];
+document.getElementById("best").textContent=best;
 
-function car(x,y,color){
-ctx.fillStyle="#111";
-ctx.fillRect(x+4,y+5,34,66);
-ctx.fillStyle=color;
-ctx.fillRect(x+7,y+3,28,65);
-ctx.fillStyle="#b8efff";
-ctx.fillRect(x+11,y+12,20,16);
-ctx.fillRect(x+11,y+42,20,12);
-ctx.fillStyle="#ffe66d";
-ctx.fillRect(x+8,y+4,7,5);
-ctx.fillRect(x+27,y+4,7,5);
-ctx.fillStyle="#222";
-ctx.fillRect(x,y+14,6,16);
-ctx.fillRect(x+36,y+14,6,16);
-ctx.fillRect(x,y+48,6,16);
-ctx.fillRect(x+36,y+48,6,16);
+function drawCar(x,y,color){
+  ctx.fillStyle=color;
+  ctx.fillRect(x+5,y+8,30,55);
+  ctx.fillStyle="#111";
+  ctx.fillRect(x,y+15,7,17);
+  ctx.fillRect(x+33,y+15,7,17);
+  ctx.fillRect(x,y+42,7,17);
+  ctx.fillRect(x+33,y+42,7,17);
+  ctx.fillStyle="#bdeaff";
+  ctx.fillRect(x+9,y+15,22,13);
+  ctx.fillStyle="#fff";
+  ctx.fillRect(x+8,y+4,8,5);
+  ctx.fillRect(x+24,y+4,8,5);
 }
 
 function drawRoad(){
-ctx.fillStyle="#278b42";
-ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#267b37";
+  ctx.fillRect(0,0,400,600);
+  ctx.fillStyle="#444";
+  ctx.fillRect(45,0,310,600);
 
-ctx.fillStyle="#444";
-ctx.fillRect(45,0,310,H);
+  ctx.fillStyle="white";
+  ctx.fillRect(45,0,5,600);
+  ctx.fillRect(350,0,5,600);
 
-ctx.fillStyle="#fff";
-ctx.fillRect(42,0,5,H);
-ctx.fillRect(355,0,5,H);
-
-ctx.fillStyle="#f7e8a3";
-for(let y=-60;y<H;y+=100){
-ctx.fillRect(150,y+roadLine,5,48);
-ctx.fillRect(245,y+roadLine,5,48);
-}
+  ctx.fillStyle="#f7e65b";
+  for(let y=-40;y<640;y+=100){
+    ctx.fillRect(146,y+roadOffset,6,45);
+    ctx.fillRect(248,y+roadOffset,6,45);
+  }
 }
 
 function draw(){
-drawRoad();
-car(player.x,player.y,"#00b7ff");
-enemies.forEach(e=>car(e.x,e.y,e.color));
-}
+  drawRoad();
+  drawCar(player.x,player.y,car);
 
-function spawn(){
-let lane=lanes[Math.floor(Math.random()*lanes.length)];
-enemies.push({
-x:lane-21,
-y:-90,
-color:colors[Math.floor(Math.random()*colors.length)]
-});
-}
+  enemies.forEach(e=>drawCar(e.x,e.y,e.color));
 
-function collision(a,b){
-return a.x<b.x+b.w&&a.x+a.w>b.x&&
-a.y<b.y+b.h&&a.y+a.h>b.y;
-}
-
-function endGame(){
-running=false;
-cancelAnimationFrame(animation);
-document.getElementById("message").textContent="💥 GAME OVER! Final score: "+score;
-document.getElementById("start").textContent="PLAY AGAIN";
-draw();
-}
-
-function update(time){
-if(!running)return;
-let dt=Math.min((time-lastTime)/16.67,2)||1;
-lastTime=time;
-
-if(left)player.x-=5*dt;
-if(right)player.x+=5*dt;
-player.x=Math.max(48,Math.min(310,player.x));
-
-roadLine=(roadLine+speed*dt)%100;
-
-if(time-lastSpawn>Math.max(550,1250-score*2)){
-spawn();
-lastSpawn=time;
-}
-
-enemies.forEach(e=>e.y+=speed*dt);
-enemies=enemies.filter(e=>e.y<H+100);
-
-for(let e of enemies){
-if(collision(
-{x:player.x+6,y:player.y+5,w:30,h:65},
-{x:e.x+6,y:e.y+5,w:30,h:65}
-)){
-endGame();
-return;
-}
-}
-
-score+=Math.round(dt);
-speed=Math.min(10,3+Math.floor(score/250));
-document.getElementById("score").textContent=score;
-document.getElementById("speed").textContent=speed;
-
-draw();
-animation=requestAnimationFrame(update);
+  if(!running){
+    ctx.fillStyle="rgba(0,0,0,.45)";
+    ctx.fillRect(50,250,300,85);
+    ctx.fillStyle="white";
+    ctx.font="bold 25px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(gameOver?"GAME OVER":paused?"PAUSED":"READY!",200,300);
+  }
 }
 
 function startGame(){
-cancelAnimationFrame(animation);
-player.x=180;
-enemies=[];
-score=0;
-speed=3;
-roadLine=0;
-left=false;right=false;
-running=true;
-lastSpawn=0;
-lastTime=0;
-document.getElementById("score").textContent="0";
-document.getElementById("speed").textContent="3";
-document.getElementById("message").textContent="Race started! Avoid the traffic!";
-document.getElementById("start").textContent="RESTART";
-draw();
-animation=requestAnimationFrame(update);
+  const level=document.getElementById("difficulty").value;
+  car=document.getElementById("carColor").value;
+
+  speed=level==="easy"?3:level==="medium"?5:7;
+  score=0;
+  enemies=[];
+  spawnTimer=0;
+  roadOffset=0;
+  player.x=180;
+  running=true;
+  paused=false;
+  gameOver=false;
+  lastTime=0;
+
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("message").textContent="Avoid the other cars!";
+  document.getElementById("pauseBtn").textContent="⏸ PAUSE";
+  document.getElementById("score").textContent=score;
+
+  cancelAnimationFrame(animation);
+  draw();
+  animation=requestAnimationFrame(loop);
 }
 
-function hold(button,direction){
-button.addEventListener("pointerdown",e=>{
-e.preventDefault();
-if(direction==="left")left=true;
-else right=true;
-});
-["pointerup","pointerleave","pointercancel"].forEach(event=>{
-button.addEventListener(event,()=>{
-if(direction==="left")left=false;
-else right=false;
-});
-});
+function restartGame(){
+  startGame();
 }
 
-hold(document.getElementById("left"),"left");
-hold(document.getElementById("right"),"right");
+function pauseGame(){
+  if(!running&&!paused)return;
+
+  if(running){
+    running=false;
+    paused=true;
+    document.getElementById("pauseBtn").textContent="▶ RESUME";
+    document.getElementById("message").textContent="Game paused";
+    draw();
+  }else if(paused){
+    paused=false;
+    running=true;
+    document.getElementById("pauseBtn").textContent="⏸ PAUSE";
+    document.getElementById("message").textContent="Keep racing!";
+    lastTime=0;
+    animation=requestAnimationFrame(loop);
+  }
+}
+
+function endGame(){
+  running=false;
+  paused=false;
+  gameOver=true;
+
+  if(score>best){
+    best=score;
+    localStorage.setItem("ppRaceBest",best);
+    document.getElementById("best").textContent=best;
+  }
+
+  document.getElementById("message").textContent=
+    "Race over! Your score: "+score+". Press RESTART to play again.";
+  draw();
+}
+
+function loop(time){
+  if(!running)return;
+
+  let dt=lastTime?Math.min((time-lastTime)/16.67,2):1;
+  lastTime=time;
+
+  if(moveLeft)player.x-=5*dt;
+  if(moveRight)player.x+=5*dt;
+
+  player.x=Math.max(55,Math.min(305,player.x));
+
+  roadOffset=(roadOffset+speed*dt)%100;
+  spawnTimer+=dt;
+
+  if(spawnTimer>Math.max(25,65-speed*3)){
+    const lanes=[75,178,280];
+    const lane=lanes[Math.floor(Math.random()*lanes.length)];
+    const colors=["#ff3333","#2196ff","#20d878","#ffcc00"];
+    enemies.push({
+      x:lane,y:-80,w:40,h:70,
+      color:colors[Math.floor(Math.random()*colors.length)]
+    });
+    spawnTimer=0;
+  }
+
+  enemies.forEach(e=>e.y+=(speed+2)*dt);
+  enemies=enemies.filter(e=>e.y<650);
+
+  for(const e of enemies){
+    if(player.x<e.x+e.w-5 &&
+       player.x+player.w>e.x+5 &&
+       player.y<e.y+e.h-5 &&
+       player.y+player.h>e.y+5){
+      endGame();
+      return;
+    }
+  }
+
+  score+=Math.floor(dt);
+  document.getElementById("score").textContent=score;
+
+  draw();
+  animation=requestAnimationFrame(loop);
+}
+
+function holdButton(id,direction){
+  const btn=document.getElementById(id);
+  btn.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    if(direction==="left")moveLeft=true;
+    else moveRight=true;
+  });
+  ["pointerup","pointerleave","pointercancel"].forEach(event=>{
+    btn.addEventListener(event,()=>{
+      if(direction==="left")moveLeft=false;
+      else moveRight=false;
+    });
+  });
+}
+
+holdButton("leftBtn","left");
+holdButton("rightBtn","right");
 
 document.addEventListener("keydown",e=>{
-if(e.key==="ArrowLeft")left=true;
-if(e.key==="ArrowRight")right=true;
+  if(e.key==="ArrowLeft"||e.key==="a")moveLeft=true;
+  if(e.key==="ArrowRight"||e.key==="d")moveRight=true;
 });
 document.addEventListener("keyup",e=>{
-if(e.key==="ArrowLeft")left=false;
-if(e.key==="ArrowRight")right=false;
+  if(e.key==="ArrowLeft"||e.key==="a")moveLeft=false;
+  if(e.key==="ArrowRight"||e.key==="d")moveRight=false;
 });
+
 draw();
 </script>
 </body>
