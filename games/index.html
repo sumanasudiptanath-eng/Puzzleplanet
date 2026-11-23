@@ -3,129 +3,352 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PuzzlePlanet - Play & Have Fun</title>
-<meta name="description" content="Play free online games at PuzzlePlanet. Enjoy puzzles, chess, racing, Ludo and more!">
+<title>PuzzlePlanet Chess</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;
+ margin:0;padding:18px 12px;
  font-family:Arial,sans-serif;
- color:white;
- background:linear-gradient(140deg,#100d2d,#25205d,#073d63);
- min-height:100vh;
+ background:linear-gradient(135deg,#10152e,#28204c);
+ color:white;text-align:center;
 }
-header{
- text-align:center;
- padding:38px 15px 25px;
-}
-.logo{font-size:48px}
-h1{font-size:36px;margin:10px 0}
-header p{color:#d6d5ff;font-size:15px}
-.tag{display:inline-block;background:#ffffff18;
- padding:9px 17px;border-radius:30px;margin-top:8px}
-.container{max-width:1000px;margin:auto;padding:15px}
-.section-title{text-align:center;margin:15px 0 25px;font-size:23px}
-.games{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:15px;
-}
+h1{color:#f9d66b;margin:8px}
+.sub{color:#c9c8e5;margin-bottom:20px}
 .game{
- text-decoration:none;color:white;
- background:linear-gradient(145deg,#ffffff20,#ffffff09);
- border:1px solid #ffffff35;
- border-radius:22px;
- padding:22px 8px;
- text-align:center;
- transition:.2s;
- box-shadow:0 8px 20px #0003;
-}
-.game:active{transform:scale(.96)}
-.game .icon{font-size:48px;margin-bottom:12px}
-.game h2{font-size:17px;margin:7px 0}
-.game p{font-size:12px;color:#d6d5ff;margin:8px 0}
-.play{
- display:inline-block;
- background:#ffca62;
- color:#272047;
- font-weight:bold;
- padding:9px 20px;
+ max-width:480px;margin:auto;
+ background:#ffffff12;padding:15px;
  border-radius:20px;
- margin-top:8px;
- font-size:13px;
 }
-footer{text-align:center;color:#c5c5e8;padding:35px 10px;font-size:13px}
-@media(min-width:650px){
- .games{grid-template-columns:repeat(3,1fr);gap:22px}
- .game{padding:30px 15px}
- .game .icon{font-size:58px}
+.status{
+ background:#171b36;padding:13px;
+ border-radius:12px;margin-bottom:12px;
+ font-weight:bold;
 }
+.board{
+ display:grid;grid-template-columns:repeat(8,1fr);
+ width:100%;border:4px solid #d9b56c;
+ border-radius:5px;overflow:hidden;
+}
+.square{
+ aspect-ratio:1;
+ display:flex;align-items:center;
+ justify-content:center;
+ font-size:clamp(25px,8vw,43px);
+ cursor:pointer;position:relative;
+ user-select:none;
+}
+.light{background:#f0d9b5}
+.dark{background:#b58863}
+.selected{background:#f7e65a!important}
+.target:after{
+ content:"";width:25%;height:25%;
+ background:#247a40;border-radius:50%;
+ position:absolute;
+}
+.piece-white{color:white;text-shadow:1px 2px 3px #333}
+.piece-black{color:#171717}
+button{
+ border:0;border-radius:10px;
+ padding:12px 15px;margin:5px;
+ font-weight:bold;font-size:14px;
+ background:#f6cc65;color:#20203c;
+ cursor:pointer;
+}
+button:disabled{opacity:.4}
+.controls{margin-top:14px}
+.message{min-height:48px;color:#f7df9c;margin:12px 0}
+a{color:#f6cc65}
 </style>
 </head>
 <body>
+<h1>♟ PuzzlePlanet Chess</h1>
+<div class="sub">Think Smart • Play Better</div>
 
-<header>
- <div class="logo">🌍</div>
- <h1>PuzzlePlanet</h1>
- <p>Play • Think • Challenge Yourself!</p>
- <div class="tag">✨ Your World of Free Online Games ✨</div>
-</header>
-
-<main class="container">
- <h2 class="section-title">🎮 CHOOSE YOUR GAME</h2>
-
- <div class="games">
-
-  <a class="game" href="games/ludo.html">
-   <div class="icon">🎲</div>
-   <h2>Ludo</h2>
-   <p>Roll the dice and win!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
-  <a class="game" href="games/car-racing.html">
-   <div class="icon">🏎️</div>
-   <h2>Car Racing</h2>
-   <p>Race and beat your score!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
-  <a class="game" href="games/word-puzzle.html">
-   <div class="icon">🔤</div>
-   <h2>Word Puzzle</h2>
-   <p>Test your vocabulary!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
-  <a class="game" href="games/chess.html">
-   <div class="icon">♟️</div>
-   <h2>Chess</h2>
-   <p>Challenge your mind!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
-  <a class="game" href="games/carrom.html">
-   <div class="icon">🎯</div>
-   <h2>Carrom</h2>
-   <p>Show your aiming skills!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
-  <a class="game" href="games/block-puzzle.html">
-   <div class="icon">🧩</div>
-   <h2>Block Puzzle</h2>
-   <p>Fit the blocks and score!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
-
+<div class="game">
+ <div class="status" id="status">White to move</div>
+ <div class="board" id="board"></div>
+ <div class="message" id="message">Select a piece to see its legal moves.</div>
+ <div class="controls">
+  <button onclick="undo()">↶ Back</button>
+  <button onclick="restart()">↻ Restart</button>
  </div>
-</main>
+ <div>
+  <button onclick="flipBoard()">⇅ Flip Board</button>
+ </div>
+ <p style="font-size:12px;color:#bbb">Two-player local chess</p>
+</div>
 
-<footer>
- <p>🌍 PuzzlePlanet</p>
- <p>Play. Think. Enjoy. Repeat!</p>
- <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
-</footer>
+<script>
+const initial=[
+"rnbqkbnr",
+"pppppppp",
+"........",
+"........",
+"........",
+"........",
+"PPPPPPPP",
+"RNBQKBNR"
+];
 
+const symbols={
+K:"♔",Q:"♕",R:"♖",B:"♗",N:"♘",P:"♙",
+k:"♚",q:"♛",r:"♜",b:"♝",n:"♞",p:"♟"
+};
+
+let board,turn,selected,history,flipped;
+let rights,ep,half,full,gameOver;
+
+function restart(){
+ board=initial.map(r=>r.split(""));
+ turn="w";selected=null;history=[];
+ rights={K:true,Q:true,k:true,q:true};
+ ep=null;half=0;full=1;flipped=false;gameOver=false;
+ render();
+ message("New game started!");
+}
+
+function clone(){
+ return {
+ board:board.map(r=>r.slice()),
+ turn,rights:{...rights},ep,half,full,gameOver
+ };
+}
+
+function restore(s){
+ board=s.board.map(r=>r.slice());
+ turn=s.turn;rights={...s.rights};
+ ep=s.ep;half=s.half;full=s.full;
+ gameOver=s.gameOver;selected=null;
+ render();
+}
+
+function inside(r,c){return r>=0&&r<8&&c>=0&&c<8}
+function color(p){
+ if(!p||p===".")return "";
+ return p===p.toUpperCase()?"w":"b";
+}
+function enemy(p){return turn==="w"?"b":"w"}
+
+function attacked(r,c,by){
+ const pawnDir=by==="w"?-1:1;
+ for(let dc of [-1,1]){
+  let rr=r-pawnDir,cc=c-dc;
+  if(inside(rr,cc)&&board[rr][cc]===(by==="w"?"P":"p"))return true;
+ }
+ const knights=[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+ for(let [dr,dc] of knights){
+  let rr=r+dr,cc=c+dc;
+  if(inside(rr,cc)&&board[rr][cc]===(by==="w"?"N":"n"))return true;
+ }
+ for(let [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){
+  let rr=r+dr,cc=c+dc,dist=1;
+  while(inside(rr,cc)){
+   let p=board[rr][cc];
+   if(p!=="."){
+    if(color(p)===by){
+     let t=p.toLowerCase();
+     if(t==="q"||(dist===1&&t==="k")||
+       (dist>=1&&((dr===0||dc===0)?t==="r":t==="b")))return true;
+    }
+    break;
+   }
+   rr+=dr;cc+=dc;dist++;
+  }
+ }
+ return false;
+}
+
+function kingPos(col){
+ for(let r=0;r<8;r++)for(let c=0;c<8;c++)
+  if(board[r][c]===(col==="w"?"K":"k"))return [r,c];
+ return null;
+}
+
+function inCheck(col){
+ let k=kingPos(col);
+ return k?attacked(k[0],k[1],col==="w"?"b":"w"):true;
+}
+
+function pseudo(r,c){
+ let p=board[r][c],col=color(p),t=p.toLowerCase(),out=[];
+ if(!col)return out;
+ const add=(rr,cc,extra={})=>{
+  if(!inside(rr,cc))return;
+  if(color(board[rr][cc])===col)return;
+  if(board[rr][cc].toLowerCase()==="k")return;
+  out.push({r:rr,c:cc,...extra});
+ };
+ if(t==="p"){
+  let d=col==="w"?-1:1,start=col==="w"?6:1;
+  if(inside(r+d,c)&&board[r+d][c]==="."){
+   add(r+d,c);
+   if(r===start&&board[r+2*d][c]===".")add(r+2*d,c);
+  }
+  for(let dc of [-1,1]){
+   let rr=r+d,cc=c+dc;
+   if(inside(rr,cc)&&color(board[rr][cc])===enemyFor(col))add(rr,cc);
+   if(ep&&ep[0]===rr&&ep[1]===cc)add(rr,cc,{ep:true});
+  }
+ }else if(t==="n"){
+  for(let [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]])add(r+dr,c+dc);
+ }else if(t==="k"){
+  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)
+   if(dr||dc)add(r+dr,c+dc);
+  let home=col==="w"?7:0,enemyCol=col==="w"?"b":"w";
+  if(r===home&&c===4&&!inCheck(col)){
+   if(rights[col==="w"?"K":"k"]&&board[home][7]===(col==="w"?"R":"r")&&
+    board[home][5]==="."&&board[home][6]==="."&&
+    !attacked(home,5,enemyCol)&&!attacked(home,6,enemyCol))
+    out.push({r:home,c:6,castle:"K"});
+   if(rights[col==="w"?"Q":"q"]&&board[home][0]===(col==="w"?"R":"r")&&
+    board[home][1]==="."&&board[home][2]==="."&&board[home][3]==="."&&
+    !attacked(home,3,enemyCol)&&!attacked(home,2,enemyCol))
+    out.push({r:home,c:2,castle:"Q"});
+  }
+ }else{
+  let dirs=t==="b"?[[1,1],[1,-1],[-1,1],[-1,-1]]:
+   t==="r"?[[1,0],[-1,0],[0,1],[0,-1]]:
+   [[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+  for(let [dr,dc] of dirs){
+   let rr=r+dr,cc=c+dc;
+   while(inside(rr,cc)){
+    if(color(board[rr][cc])===col)break;
+    if(board[rr][cc]===".")add(rr,cc);
+    else {add(rr,cc);break;}
+    if(t==="b"||t==="r") {rr+=dr;cc+=dc;}
+    else break;
+   }
+  }
+ }
+ return out;
+}
+function enemyFor(col){return col==="w"?"b":"w"}
+
+function legalMoves(r,c){
+ return pseudo(r,c).filter(m=>{
+  let s=clone();
+  rawMove(r,c,m);
+  let safe=!inCheck(color(s.board[r][c])||s.turn);
+  restoreRaw(s);
+  return safe;
+ });
+}
+
+function restoreRaw(s){
+ board=s.board;turn=s.turn;rights=s.rights;
+ ep=s.ep;half=s.half;full=s.full;gameOver=s.gameOver;
+}
+
+function rawMove(r,c,m,promo){
+ let p=board[r][c],col=color(p),target=board[m.r][m.c];
+ board[r][c]=".";
+ if(m.ep)board[m.r+(col==="w"?1:-1)][m.c]=".";
+ if(m.castle){
+  let row=col==="w"?7:0;
+  let rookCol=m.castle==="K"?7:0;
+  let newCol=m.castle==="K"?5:3;
+  board[row][newCol]=board[row][rookCol];
+  board[row][rookCol]=".";
+ }
+ board[m.r][m.c]=promo||(p.toLowerCase()==="p"&&(m.r===0||m.r===7)?(col==="w"?"Q":"q"):p);
+ if(p==="K"){rights.K=false;rights.Q=false}
+ if(p==="k"){rights.k=false;rights.q=false}
+ if(r===7&&c===0||m.r===7&&m.c===0)rights.Q=false;
+ if(r===7&&c===7||m.r===7&&m.c===7)rights.K=false;
+ if(r===0&&c===0||m.r===0&&m.c===0)rights.q=false;
+ if(r===0&&c===7||m.r===0&&m.c===7)rights.k=false;
+ ep=p.toLowerCase()==="p"&&Math.abs(m.r-r)===2?[(m.r+r)/2,c]:null;
+ half=p.toLowerCase()==="p"||target!=="."||m.ep?0:half+1;
+ if(col==="b")full++;
+ turn=enemyFor(col);
+}
+
+function move(r,c,m){
+ if(gameOver)return;
+ history.push(clone());
+ let p=board[r][c];
+ let promotion="";
+ if(p.toLowerCase()==="p"&&(m.r===0||m.r===7)){
+  let choice=prompt("Promote to Q (Queen), R (Rook), B (Bishop), N (Knight)","Q");
+  choice=(choice||"Q").toUpperCase();
+  if(!["Q","R","B","N"].includes(choice))choice="Q";
+  promotion=color(p)==="w"?choice:choice.toLowerCase();
+ }
+ let from=p;
+ rawMove(r,c,m,promotion);
+ selected=null;
+ render();
+}
+
+function allMoves(){
+ let out=[];
+ for(let r=0;r<8;r++)for(let c=0;c<8;c++)
+  if(color(board[r][c])===turn)
+   for(let m of pseudo(r,c)){
+    let s=clone(),p=board[r][c];
+    rawMove(r,c,m);
+    let safe=!inCheck(color(p));
+    restoreRaw(s);
+    if(safe)out.push({r,c,m});
+   }
+ return out;
+}
+
+function clickSquare(r,c){
+ if(gameOver)return;
+ let p=board[r][c];
+ if(selected){
+  let moves=legalMoves(selected[0],selected[1]);
+  let chosen=moves.find(m=>m.r===r&&m.c===c);
+  if(chosen){move(selected[0],selected[1],chosen);return}
+ }
+ if(color(p)===turn){selected=[r,c];render();message("Choose a highlighted square.");}
+ else {selected=null;render();message("Select one of your pieces.");}
+}
+
+function render(){
+ let el=document.getElementById("board");el.innerHTML="";
+ let moves=selected?legalMoves(selected[0],selected[1]):[];
+ for(let x=0;x<64;x++){
+  let r=flipped?7-(x>>3):(x>>3);
+  let c=flipped?7-(x%8):(x%8);
+  let sq=document.createElement("div");
+  sq.className="square "+((r+c)%2?"dark":"light");
+  if(selected&&selected[0]===r&&selected[1]===c)sq.classList.add("selected");
+  if(moves.some(m=>m.r===r&&m.c===c))sq.classList.add("target");
+  let p=board[r][c];
+  if(p!=="."){
+   let span=document.createElement("span");
+   span.textContent=symbols[p];
+   span.className=color(p)==="w"?"piece-white":"piece-black";
+   sq.appendChild(span);
+  }
+  sq.onclick=()=>clickSquare(r,c);
+  el.appendChild(sq);
+ }
+ updateStatus();
+}
+
+function updateStatus(){
+ let moves=allMoves(),check=inCheck(turn);
+ let status=document.getElementById("status");
+ if(!moves.length){
+  gameOver=true;
+  status.textContent=check?"CHECKMATE! "+(turn==="w"?"Black":"White")+" wins!":"DRAW — STALEMATE";
+ }else if(half>=100){
+  status.textContent="50-move draw may be claimed";
+ }else{
+  status.textContent=(turn==="w"?"White":"Black")+" to move"+(check?" — CHECK!":"");
+ }
+}
+
+function message(t){document.getElementById("message").textContent=t}
+function undo(){
+ if(!history.length)return;
+ restore(history.pop());message("Previous move restored.");
+}
+function flipBoard(){flipped=!flipped;render()}
+restart();
+</script>
 </body>
 </html>
