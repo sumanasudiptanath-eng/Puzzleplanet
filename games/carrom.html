@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzlePlanet - Carrom</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;
+ background:linear-gradient(135deg,#100b30,#25205b,#101b3b);
+ color:white;font-family:Arial,sans-serif;
+ text-align:center;padding:15px;
+}
+h1{color:#ffd66b;margin:10px 0 4px}
+.subtitle{color:#c7c3e9;margin-bottom:15px}
+.game{
+ max-width:520px;margin:auto;
+ background:#211b49;padding:15px;
+ border-radius:20px;box-shadow:0 10px 35px #0008;
+}
+.score{
+ display:flex;justify-content:space-around;
+ gap:8px;margin-bottom:12px;
+}
+.score div{
+ background:#342b68;padding:10px;
+ border-radius:12px;flex:1;font-weight:bold;
+}
+canvas{
+ display:block;width:100%;height:auto;
+ border-radius:12px;touch-action:none;
+ background:#c98a45;
+}
+.controls{margin-top:14px}
+button{
+ border:0;border-radius:12px;padding:13px 20px;
+ font-size:16px;font-weight:bold;cursor:pointer;
+ color:#24153e;background:#ffd36c;margin:5px;
+}
+button:active{transform:scale(.96)}
+#status{color:#ffe49b;min-height:24px;margin:12px 0}
+.hint{font-size:13px;color:#c8c2ed;line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>🎯 PuzzlePlanet</h1>
+<div class="subtitle">CARROM CHAMPIONSHIP</div>
+
+<div class="game">
+ <div class="score">
+  <div>YOU<br><span id="playerScore">0</span></div>
+  <div>COMPUTER<br><span id="computerScore">0</span></div>
+ </div>
+
+ <canvas id="board" width="600" height="600"></canvas>
+
+ <div id="status">Your turn! Drag backward from striker to aim.</div>
+
+ <div class="controls">
+  <button onclick="resetGame()">↻ New Game</button>
+ </div>
+ <p class="hint">
+  TOUCH CONTROLS<br>
+  Drag from the striker backwards to aim and set power.<br>
+  Release your finger to shoot!
+ </p>
+</div>
+
+<script>
+const canvas=document.getElementById("board");
+const ctx=canvas.getContext("2d");
+const W=600;
+const pockets=[
+ [48,48],[552,48],[48,552],[552,552]
+];
+let pieces=[];
+let turn="player";
+let playerScore=0,computerScore=0;
+let aiming=false,aimX=0,aimY=0;
+let shotPower=0,shotAngle=0;
+let moving=false,queenPending=null;
+let gameOver=false;
+let lastTime=0;
+
+function makePiece(x,y,color,r=15,type="coin"){
+ pieces.push({x,y,vx:0,vy:0,r,color,type,active:true});
+}
+function resetGame(){
+ pieces=[];
+ playerScore=0;computerScore=0;
+ turn="player";gameOver=false;
+ queenPending=null;
+ makePiece(300,300,"#d93639",16,"queen");
+ const pattern=[
+ [300,270],[326,285],[326,315],[300,330],
+ [274,315],[274,285],[300,240],[352,300],
+ [248,300],[300,360],[360,270],[240,330]
+ ];
+ pattern.forEach((p,i)=>{
+  makePiece(p[0],p[1],i%2===0?"#f4eee0":"#25232a",15);
+ });
+ makePiece(300,505,"#f5a623",19,"striker");
+ updateScore();
+ setStatus("Your turn! Drag backward from striker to aim.");
+ draw();
+}
+function striker(){return pieces.find(p=>p.type==="striker"&&p.active)}
+function updateScore(){
+ document.getElementById("playerScore").textContent=playerScore;
+ document.getElementById("computerScore").textContent=computerScore;
+}
+function setStatus(s){document.getElementById("status").textContent=s}
+function draw(){
+ ctx.clearRect(0,0,W,W);
+ // wooden board
+ ctx.fillStyle="#b97836";ctx.fillRect(0,0,W,W);
+ ctx.fillStyle="#e8c18a";ctx.fillRect(30,30,540,540);
+ ctx.strokeStyle="#71401e";ctx.lineWidth=12;
+ ctx.strokeRect(35,35,530,530);
+ ctx.lineWidth=3;ctx.strokeStyle="#9b5227";
+ ctx.strokeRect(65,65,470,470);
+ // pockets
+ pockets.forEach(([x,y])=>{
+  ctx.beginPath();ctx.arc(x,y,27,0,Math.PI*2);
+  ctx.fillStyle="#171016";ctx.fill();
+  ctx.strokeStyle="#7c4825";ctx.lineWidth=5;ctx.stroke();
+ });
+ // center decoration
+ ctx.beginPath();ctx.arc(300,300,65,0,Math.PI*2);
+ ctx.strokeStyle="#b96d36";ctx.lineWidth=3;ctx.stroke();
+ ctx.beginPath();ctx.arc(300,300,12,0,Math.PI*2);
+ ctx.stroke();
+ // baselines
+ ctx.strokeStyle="#a34c26";ctx.lineWidth=3;
+ ctx.beginPath();ctx.moveTo(120,480);ctx.lineTo(480,480);
+ ctx.moveTo(120,520);ctx.lineTo(480,520);
+ ctx.stroke();
+ ctx.beginPath();ctx.arc(300,500,42,0,Math.PI*2);ctx.stroke();
+ // pieces
+ pieces.filter(p=>p.active).forEach(p=>{
+  ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+  ctx.fillStyle=p.color;ctx.fill();
+  ctx.strokeStyle=p.type==="queen"?"#ffb1a5":"#7b5a3d";
+  ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.arc(p.x-4,p.y-4,p.r*.32,0,Math.PI*2);
+  ctx.fillStyle="#ffffff66";ctx.fill();
+  if(p.type==="queen"){
+   ctx.fillStyle="white";ctx.font="bold 13px Arial";
+   ctx.textAlign="center";ctx.fillText("Q",p.x,p.y+5);
+  }
+ });
+ // aiming guide
+ if(aiming&&turn==="player"){
+  const s=striker();
+  if(s){
+   const dx=s.x-aimX,dy=s.y-aimY;
+   const len=Math.hypot(dx,dy);
+   if(len>0){
+    ctx.beginPath();ctx.moveTo(s.x,s.y);
+    ctx.lineTo(s.x+dx/len*120,s.y+dy/len*120);
+    ctx.strokeStyle="#e9a32a";ctx.lineWidth=3;
+    ctx.setLineDash([8,6]);ctx.stroke();ctx.setLineDash([]);
+   }
+  }
+ }
+}
+function pos(e){
+ const rect=canvas.getBoundingClientRect();
+ return {
+  x:(e.clientX-rect.left)*W/rect.width,
+  y:(e.clientY-rect.top)*W/rect.height
+ };
+}
+canvas.addEventListener("pointerdown",e=>{
+ if(turn!=="player"||moving||gameOver)return;
+ const p=pos(e),s=striker();
+ if(!s)return;
+ if(Math.hypot(p.x-s.x,p.y-s.y)<65){
+  aiming=true;aimX=p.x;aimY=p.y;
+  canvas.setPointerCapture(e.pointerId);draw();
+ }
+});
+canvas.addEventListener("pointermove",e=>{
+ if(!aiming)return;
+ const p=pos(e);aimX=p.x;aimY=p.y;draw();
+});
+canvas.addEventListener("pointerup",()=>{
+ if(!aiming)return;
+ aiming=false;
+ const s=striker();
+ if(s){
+  let dx=s.x-aimX,dy=s.y-aimY;
+  let len=Math.hypot(dx,dy);
+  if(len>5){
+   const power=Math.min(len,150)*0.075;
+   s.vx=dx/len*power;
+   s.vy=dy/len*power;
+   moving=true;
+   setStatus("Nice shot! Coins are moving...");
+  }
+ }
+ draw();
+});
+function collide(){
+ const active=pieces.filter(p=>p.active);
+ for(let i=0;i<active.length;i++){
+  for(let j=i+1;j<active.length;j++){
+   const a=active[i],b=active[j];
+   let dx=b.x-a.x,dy=b.y-a.y;
+   let d=Math.hypot(dx,dy),min=a.r+b.r;
+   if(d>0&&d<min){
+    let nx=dx/d,ny=dy/d;
+    let overlap=min-d;
+    a.x-=nx*overlap/2;a.y-=ny*overlap/2;
+    b.x+=nx*overlap/2;b.y+=ny*overlap/2;
+    let rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
+    if(rel<0){
+     let impulse=rel;
+     a.vx+=impulse*nx;a.vy+=impulse*ny;
+     b.vx-=impulse*nx;b.vy-=impulse*ny;
+    }
+   }
+  }
+ }
+}
+function pocketCheck(){
+ pieces.forEach(p=>{
+  if(!p.active||p.type==="striker")return;
+  for(const [x,y] of pockets){
+   if(Math.hypot(p.x-x,p.y-y)<28){
+    p.active=false;
+    if(p.type==="queen"){
+     queenPending=turn;
+     setStatus("QUEEN POCKETED! Cover it with another coin.");
+    }else if(queenPending===turn){
+     if(turn==="player")playerScore+=3;
+     else computerScore+=3;
+     queenPending=null;
+    }else{
+     if(turn==="player")playerScore++;
+     else computerScore++;
+    }
+    updateScore();break;
+   }
+  }
+ });
+}
+function physics(dt){
+ const step=Math.min(dt/16.67,2);
+ for(const p of pieces){
+  if(!p.active)continue;
+  p.x+=p.vx*step;p.y+=p.vy*step;
+  if(p.type==="striker"){
+   if(p.x<90||p.x>510){p.vx*=-.8;p.x=Math.max(90,Math.min(510,p.x))}
+   if(p.y<90||p.y>510){p.vy*=-.8;p.y=Math.max(90,Math.min(510,p.y))}
+  }else{
+   if(p.x<85||p.x>515){p.vx*=-.75;p.x=Math.max(85,Math.min(515,p.x))}
+   if(p.y<85||p.y>515){p.vy*=-.75;p.y=Math.max(85,Math.min(515,p.y))}
+  }
+  p.vx*=Math.pow(.985,step);
+  p.vy*=Math.pow(.985,step);
+  if(Math.abs(p.vx)<.025)p.vx=0;
+  if(Math.abs(p.vy)<.025)p.vy=0;
+ }
+ collide();
+ pocketCheck();
+}
+function isMoving(){
+ return pieces.some(p=>p.active&&(Math.abs(p.vx)>.04||Math.abs(p.vy)>.04));
+}
+function placeStriker(){
+ const s=striker();
+ if(s){
+  s.x=300;s.y=turn==="player"?505:95;
+  s.vx=0;s.vy=0;
+ }
+}
+function nextTurn(){
+ if(gameOver)return;
+ if(!pieces.some(p=>p.active&&p.type!=="queen"&&p.type!=="striker")){
+  gameOver=true;
+  setStatus(playerScore>computerScore?"🏆 YOU WIN!":"GAME OVER! COMPUTER WINS!");
+  return;
+ }
+ turn=turn==="player"?"computer":"player";
+ placeStriker();
+ if(turn==="computer"){
+  setStatus("Computer is taking a shot...");
+  setTimeout(computerShot,650);
+ }else{
+  setStatus("Your turn! Drag backward from striker to aim.");
+ }
+}
+function computerShot(){
+ if(turn!=="computer"||gameOver)return;
+ const s=striker();
+ if(!s)return;
+ const targets=pieces.filter(p=>p.active&&p.type!=="striker");
+ if(targets.length){
+  const target=targets[Math.floor(Math.random()*targets.length)];
+  let dx=target.x-s.x,dy=target.y-s.y;
+  let len=Math.hypot(dx,dy)||1;
+  s.vx=dx/len*7;s.vy=dy/len*7;
+  moving=true;
+ }
+}
+function loop(t){
+ const dt=lastTime?Math.min(t-lastTime,35):16.67;
+ lastTime=t;
+ if(moving){
+  physics(dt);
+  if(!isMoving()){
+   moving=false;
+   nextTurn();
+  }
+ }
+ draw();
+ requestAnimationFrame(loop);
+}
+resetGame();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
