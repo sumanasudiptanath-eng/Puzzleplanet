@@ -4,149 +4,217 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PuzzlePlanet - Play & Have Fun</title>
-<meta name="description" content="Play free online games at PuzzlePlanet. Enjoy puzzles, chess, racing, Ludo and more!">
+<meta name="description" content="Play free online games at PuzzlePlanet. Enjoy Ludo, racing, word puzzles, chess, carrom and Gemzora!">
+
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,sans-serif;
- color:white;
- background:linear-gradient(140deg,#100d2d,#25205d,#073d63);
- min-height:100vh;
+* {
+  box-sizing: border-box;
 }
-header{
- text-align:center;
- padding:38px 15px 25px;
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+  background: linear-gradient(140deg, #100d2d, #25205d, #073d63);
+  min-height: 100vh;
 }
-.logo{font-size:48px}
-h1{font-size:36px;margin:10px 0}
-header p{color:#d6d5ff;font-size:15px}
-.tag{display:inline-block;background:#ffffff18;
- padding:9px 17px;border-radius:30px;margin-top:8px}
-.container{max-width:1000px;margin:auto;padding:15px}
-.section-title{text-align:center;margin:15px 0 25px;font-size:23px}
-.games{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:15px;
+
+header {
+  text-align: center;
+  padding: 38px 15px 25px;
 }
-.game{
- text-decoration:none;color:white;
- background:linear-gradient(145deg,#ffffff20,#ffffff09);
- border:1px solid #ffffff35;
- border-radius:22px;
- padding:22px 8px;
- text-align:center;
- transition:.2s;
- box-shadow:0 8px 20px #0003;
+
+.logo {
+  font-size: 52px;
 }
-.game:active{transform:scale(.96)}
-.game .icon{font-size:48px;margin-bottom:12px}
-.game h2{font-size:17px;margin:7px 0}
-.game p{font-size:12px;color:#d6d5ff;margin:8px 0}
-.play{
- display:inline-block;
- background:#ffca62;
- color:#272047;
- font-weight:bold;
- padding:9px 20px;
- border-radius:20px;
- margin-top:8px;
- font-size:13px;
+
+h1 {
+  font-size: 36px;
+  margin: 10px 0;
 }
-footer{text-align:center;color:#c5c5e8;padding:35px 10px;font-size:13px}
-@media(min-width:650px){
- .games{grid-template-columns:repeat(3,1fr);gap:22px}
- .game{padding:30px 15px}
- .game .icon{font-size:58px}
+
+header p {
+  color: #d6d5ff;
+  font-size: 15px;
+}
+
+.tag {
+  display: inline-block;
+  background: #ffffff18;
+  padding: 9px 17px;
+  border-radius: 30px;
+  margin-top: 8px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 15px;
+}
+
+.section-title {
+  text-align: center;
+  margin: 15px 0 25px;
+  font-size: 23px;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.game {
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(145deg, #ffffff20, #ffffff09);
+  border: 1px solid #ffffff35;
+  border-radius: 22px;
+  padding: 22px 8px;
+  text-align: center;
+  transition: .2s;
+  box-shadow: 0 8px 20px #0003;
+}
+
+.game:hover {
+  transform: translateY(-5px);
+  border-color: #ffca62;
+  background: linear-gradient(145deg, #ffffff30, #ffffff12);
+}
+
+.game:active {
+  transform: scale(.96);
+}
+
+.game .icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.game h2 {
+  font-size: 17px;
+  margin: 7px 0;
+}
+
+.game p {
+  font-size: 12px;
+  color: #d6d5ff;
+  margin: 8px 0;
+}
+
+.play {
+  display: inline-block;
+  background: #ffca62;
+  color: #272047;
+  font-weight: bold;
+  padding: 9px 20px;
+  border-radius: 20px;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.game.gemzora {
+  border: 1px solid #d9a7ff;
+  background: linear-gradient(145deg, #7336a5, #38206e);
+}
+
+.game.gemzora .icon {
+  font-size: 54px;
+}
+
+.game.gemzora .play {
+  background: #e5b6ff;
+}
+
+footer {
+  text-align: center;
+  color: #c5c5e8;
+  padding: 35px 10px;
+  font-size: 13px;
+}
+
+@media (min-width: 650px) {
+  .games {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .game {
+    padding: 30px 15px;
+  }
+
+  .game .icon {
+    font-size: 58px;
+  }
 }
 </style>
 </head>
+
 <body>
 
 <header>
- <div class="logo">🌍</div>
- <h1>PuzzlePlanet</h1>
- <p>Play • Think • Challenge Yourself!</p>
- <div class="tag">✨ Your World of Free Online Games ✨</div>
+  <div class="logo">🌍</div>
+  <h1>PuzzlePlanet</h1>
+  <p>Play • Think • Challenge Yourself!</p>
+  <div class="tag">✨ Your World of Free Online Games ✨</div>
 </header>
 
 <main class="container">
- <h2 class="section-title">🎮 CHOOSE YOUR GAME</h2>
 
- <div class="games">
+  <h2 class="section-title">🎮 CHOOSE YOUR GAME</h2>
 
-  <a class="game" href="games/ludo.html">
-   <div class="icon">🎲</div>
-   <h2>Ludo</h2>
-   <p>Roll the dice and win!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+  <div class="games">
 
-  <a class="game" href="games/car-racing.html">
-   <div class="icon">🏎️</div>
-   <h2>Car Racing</h2>
-   <p>Race and beat your score!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+    <a class="game" href="games/ludo.html">
+      <div class="icon">🎲</div>
+      <h2>Ludo</h2>
+      <p>Roll the dice and win!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
 
-  <a class="game" href="games/word-puzzle.html">
-   <div class="icon">🔤</div>
-   <h2>Word Puzzle</h2>
-   <p>Test your vocabulary!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+    <a class="game" href="games/car-racing.html">
+      <div class="icon">🏎️</div>
+      <h2>Car Racing</h2>
+      <p>Race and beat your score!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
 
-  <a class="game" href="games/chess.html">
-   <div class="icon">♟️</div>
-   <h2>Chess</h2>
-   <p>Challenge your mind!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+    <a class="game" href="games/word-puzzle.html">
+      <div class="icon">🔤</div>
+      <h2>Word Puzzle</h2>
+      <p>Test your vocabulary!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
 
-  <a class="game" href="games/carrom.html">
-   <div class="icon">🎯</div>
-   <h2>Carrom</h2>
-   <p>Show your aiming skills!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+    <a class="game" href="games/chess.html">
+      <div class="icon">♟️</div>
+      <h2>Chess</h2>
+      <p>Challenge your mind!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
 
-  <a class="game" href="games/block-puzzle.html">
-   <div class="icon">🧩</div>
-   <h2>Block Puzzle</h2>
-   <p>Fit the blocks and score!</p>
-   <span class="play">PLAY NOW →</span>
-  </a>
+    <a class="game" href="games/carrom.html">
+      <div class="icon">🎯</div>
+      <h2>Carrom</h2>
+      <p>Show your aiming skills!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
 
- </div>
+    <a class="game gemzora" href="games/gemzora.html">
+      <div class="icon">💎</div>
+      <h2>Gemzora</h2>
+      <p>Match gems and solve puzzles!</p>
+      <span class="play">PLAY NOW →</span>
+    </a>
+
+  </div>
 </main>
 
 <footer>
- <p>🌍 PuzzlePlanet</p>
- <p>Play. Think. Enjoy. Repeat!</p>
- <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
+  <p>🌍 PuzzlePlanet</p>
+  <p>Play. Think. Enjoy. Repeat!</p>
+  <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
 </footer>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const games = document.querySelector(".games-grid");
-
-    if (games && !document.getElementById("gemzora-card")) {
-        const card = document.createElement("a");
-
-        card.id = "gemzora-card";
-        card.href = "games/gemzora.html";
-        card.className = "game-card";
-
-        card.innerHTML = `
-            <h3>💎 Gemzora</h3>
-            <p>Match gems and solve puzzles!</p>
-        `;
-
-        games.appendChild(card);
-    }
-});
-</script>
- 
 </body>
 </html>
