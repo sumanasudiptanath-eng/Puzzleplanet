@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PuzzlePlanet - Block Blast</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:15px;min-height:100vh;
+ font-family:Arial,sans-serif;color:white;text-align:center;
+ background:linear-gradient(140deg,#100b30,#27205c,#101b3b);
+}
+h1{color:#ffd76c;margin:12px 0 3px;font-size:30px}
+.sub{color:#c9c3ef;font-size:13px;letter-spacing:2px}
+.game{
+ max-width:480px;margin:18px auto;
+ padding:15px;background:#211b49;
+ border-radius:22px;box-shadow:0 12px 35px #0008;
+}
+.stats{display:flex;gap:9px;margin-bottom:15px}
+.stat{
+ flex:1;background:#362d70;padding:12px;
+ border-radius:13px;font-weight:bold;
+}
+.stat small{display:block;color:#c7bdf0;font-size:11px;margin-bottom:5px}
+.stat span{font-size:23px;color:#ffdc75}
+#board{
+ width:100%;aspect-ratio:1;
+ display:grid;grid-template-columns:repeat(10,1fr);
+ gap:3px;padding:7px;
+ background:#171334;border-radius:13px;
+ touch-action:none;
+}
+.cell{
+ background:#332b62;border-radius:4px;
+ aspect-ratio:1;transition:background .12s;
+}
+.cell.filled{
+ background:var(--color,#43d9e9);
+ box-shadow:inset 0 2px 5px #ffffff55,0 2px 4px #0005;
+}
+.cell.preview{background:#ffffff65}
+.cell.bad{background:#ff626c}
+.pieces{
+ display:flex;justify-content:space-around;
+ align-items:center;gap:5px;margin-top:22px;
+ min-height:100px;
+}
+.piece{
+ display:grid;gap:3px;touch-action:none;
+ padding:5px;border-radius:9px;
+ min-width:85px;min-height:85px;
+ align-content:center;justify-content:center;
+}
+.piece.selected{background:#ffffff22;outline:2px solid #ffd76c}
+.piece.disabled{opacity:.2}
+.block{
+ width:20px;height:20px;border-radius:4px;
+ box-shadow:inset 0 2px 4px #ffffff55;
+}
+.controls{margin-top:15px}
+button{
+ border:0;border-radius:12px;padding:13px 22px;
+ font-weight:bold;font-size:15px;
+ background:#ffd66b;color:#251744;margin:5px;
+}
+button:active{transform:scale(.96)}
+#message{color:#ffe29a;min-height:25px;margin:12px 0;font-size:14px}
+.note{color:#c8c1e9;font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>💥 BLOCK BLAST</h1>
+<div class="sub">PUZZLEPLANET CHALLENGE</div>
+
+<div class="game">
+ <div class="stats">
+  <div class="stat"><small>SCORE</small><span id="score">0</span></div>
+  <div class="stat"><small>BEST SCORE</small><span id="best">0</span></div>
+  <div class="stat"><small>LINES</small><span id="lines">0</span></div>
+ </div>
+
+ <div id="board"></div>
+
+ <div id="message">Choose a block and place it on the board!</div>
+
+ <div class="pieces" id="pieces"></div>
+
+ <div class="controls">
+  <button onclick="newGame()">↻ NEW GAME</button>
+ </div>
+
+ <p class="note">
+  Drag blocks onto the board.<br>
+  Complete full rows or columns to clear them.<br>
+  Clear multiple lines for bonus points!
+ </p>
+</div>
+
+<script>
+const N=10;
+const boardEl=document.getElementById("board");
+const piecesEl=document.getElementById("pieces");
+const scoreEl=document.getElementById("score");
+const bestEl=document.getElementById("best");
+const linesEl=document.getElementById("lines");
+const message=document.getElementById("message");
+
+const colors=[
+ "#39d5ed","#ffb84d","#ff638e",
+ "#9b7bff","#55e69b","#ffdf58",
+ "#ff855e"
+];
+
+const shapes=[
+ [[0,0]],
+ [[0,0],[0,1]],
+ [[0,0],[0,1],[0,2]],
+ [[0,0],[1,0],[2,0]],
+ [[0,0],[0,1],[1,0],[1,1]],
+ [[0,0],[1,0],[2,0],[2,1]],
+ [[0,0],[0,1],[1,1],[1,2]],
+ [[0,0],[1,0],[2,0],[3,0]],
+ [[0,0],[0,1],[0,2],[0,3]],
+ [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
+ [[0,0],[1,0],[2,0],[1,1]],
+ [[0,1],[1,0],[1,1],[1,2],[2,1]],
+ [[0,0],[1,0],[1,1],[2,1]],
+ [[0,0],[0,1],[1,0],[2,0]],
+ [[0,0],[1,0],[2,0],[2,1],[2,2]]
+];
+
+let grid=[],pieces=[],score=0,lines=0;
+let best=Number(localStorage.getItem("bb_best")||0);
+let selected=-1,dragging=false,dragIndex=-1;
+let dragShape=null,dragColor=null,preview=null;
+let touchStart=null;
+
+bestEl.textContent=best;
+
+function newGame(){
+ grid=Array.from({length:N},()=>Array(N).fill(null));
+ score=0;lines=0;selected=-1;
+ pieces=[];preview=null;dragging=false;
+ updateStats();
+ generatePieces();
+ render();
+ message.textContent="Choose a block and place it on the board!";
+}
+function updateStats(){
+ scoreEl.textContent=score;
+ bestEl.textContent=best;
+ linesEl.textContent=lines;
+}
+function randomPiece(){
+ const shape=shapes[Math.floor(Math.random()*shapes.length)];
+ return {
+  shape:shape.map(p=>[...p]),
+  color:colors[Math.floor(Math.random()*colors.length)],
+  used:false
+ };
+}
+function generatePieces(){
+ pieces=[randomPiece(),randomPiece(),randomPiece()];
+}
+function render(){
+ boardEl.innerHTML="";
+ for(let r=0;r<N;r++){
+  for(let c=0;c<N;c++){
+   const cell=document.createElement("div");
+   cell.className="cell";
+   if(grid[r][c]){
+    cell.classList.add("filled");
+    cell.style.setProperty("--color",grid[r][c]);
+   }
+   if(preview&&preview.valid&&preview.cells.some(p=>p[0]===r&&p[1]===c)){
+    cell.classList.add("preview");
+   }
+   if(preview&&!preview.valid&&preview.cells.some(p=>p[0]===r&&p[1]===c)){
+    cell.classList.add("bad");
+   }
+   boardEl.appendChild(cell);
+  }
+ }
+ renderPieces();
+}
+function renderPieces(){
+ piecesEl.innerHTML="";
+ pieces.forEach((p,i)=>{
+  const el=document.createElement("div");
+  el.className="piece";
+  if(i===selected)el.classList.add("selected");
+  if(p.used)el.classList.add("disabled");
+  const maxR=Math.max(...p.shape.map(x=>x[0]))+1;
+  const maxC=Math.max(...p.shape.map(x=>x[1]))+1;
+  el.style.gridTemplateColumns=`repeat(${maxC},20px)`;
+  el.style.gridTemplateRows=`repeat(${maxR},20px)`;
+  for(let r=0;r<maxR;r++){
+   for(let c=0;c<maxC;c++){
+    const b=document.createElement("div");
+    if(p.shape.some(x=>x[0]===r&&x[1]===c)){
+     b.className="block";
+     b.style.background=p.color;
+    }
+    el.appendChild(b);
+   }
+  }
+  el.addEventListener("pointerdown",e=>{
+   if(p.used)return;
+   e.preventDefault();
+   selected=i;dragIndex=i;
+   dragging=true;dragShape=p.shape;
+   dragColor=p.color;
+   el.setPointerCapture(e.pointerId);
+   renderPieces();
+  });
+  el.addEventListener("pointermove",e=>{
+   if(!dragging||dragIndex!==i)return;
+   showPreview(e);
+  });
+  el.addEventListener("pointerup",e=>{
+   if(!dragging||dragIndex!==i)return;
+   dragging=false;
+   const pos=boardPosition(e);
+   if(pos)placePiece(i,pos.r,pos.c);
+   else{preview=null;render();}
+  });
+  el.addEventListener("pointercancel",()=>{
+   dragging=false;preview=null;render();
+  });
+  piecesEl.appendChild(el);
+ });
+}
+function boardPosition(e){
+ const rect=boardEl.getBoundingClientRect();
+ const x=e.clientX,y=e.clientY;
+ if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return null;
+ return {
+  r:Math.floor((y-rect.top)/rect.height*N),
+  c:Math.floor((x-rect.left)/rect.width*N)
+ };
+}
+function canPlace(shape,r,c){
+ return shape.every(([dr,dc])=>{
+  const rr=r+dr,cc=c+dc;
+  return rr>=0&&rr<N&&cc>=0&&cc<N&&!grid[rr][cc];
+ });
+}
+function showPreview(e){
+ const pos=boardPosition(e);
+ if(!pos){preview=null;render();return;}
+ const cells=dragShape.map(([r,c])=>[pos.r+r,pos.c+c]);
+ preview={
+  cells,
+  valid:canPlace(dragShape,pos.r,pos.c)
+ };
+ const cellsEl=boardEl.children;
+ for(const el of cellsEl)el.classList.remove("preview","bad");
+ preview.cells.forEach(([r,c])=>{
+  if(r>=0&&r<N&&c>=0&&c<N){
+   cellsEl[r*N+c].classList.add(preview.valid?"preview":"bad");
+  }
+ });
+}
+function placePiece(i,r,c){
+ const p=pieces[i];
+ if(!p||p.used||!canPlace(p.shape,r,c)){
+  preview=null;message.textContent="That spot is not available! Try again.";
+  render();return;
+ }
+ p.shape.forEach(([dr,dc])=>{
+  grid[r+dr][c+dc]=p.color;
+ });
+ p.used=true;selected=-1;preview=null;
+ score+=p.shape.length;
+ clearLines();
+ updateStats();
+ if(pieces.every(x=>x.used))generatePieces();
+ render();
+ if(!hasMoves()){
+  message.textContent="🏆 GAME OVER! Final score: "+score;
+ }else{
+  message.textContent="Great move! Keep blasting! 💥";
+ }
+}
+function clearLines(){
+ let fullRows=[],fullCols=[];
+ for(let r=0;r<N;r++){
+  if(grid[r].every(x=>x!==null))fullRows.push(r);
+ }
+ for(let c=0;c<N;c++){
+  if(grid.every(row=>row[c]!==null))fullCols.push(c);
+ }
+ const total=fullRows.length+fullCols.length;
+ if(!total)return;
+ fullRows.forEach(r=>grid[r].fill(null));
+ fullCols.forEach(c=>{
+  for(let r=0;r<N;r++)grid[r][c]=null;
+ });
+ lines+=total;
+ score+=total*10+(total>1?(total-1)*20:0);
+ if(score>best){
+  best=score;
+  localStorage.setItem("bb_best",best);
+ }
+ message.textContent=total>1?"🔥 COMBO! "+total+" lines cleared!":"✨ LINE CLEARED!";
+}
+function hasMoves(){
+ for(const p of pieces.filter(x=>!x.used)){
+  for(let r=0;r<N;r++){
+   for(let c=0;c<N;c++){
+    if(canPlace(p.shape,r,c))return true;
+   }
+  }
+ }
+ return false;
+}
+newGame();
+</script>
+</body>
+</html>
