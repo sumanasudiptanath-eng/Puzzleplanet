@@ -127,5 +127,26 @@ footer{text-align:center;color:#c5c5e8;padding:35px 10px;font-size:13px}
  <p>© 2026 PuzzlePlanet. All Rights Reserved.</p>
 </footer>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const games = document.querySelector(".games-grid");
+
+    if (games && !document.getElementById("gemzora-card")) {
+        const card = document.createElement("a");
+
+        card.id = "gemzora-card";
+        card.href = "games/gemzora.html";
+        card.className = "game-card";
+
+        card.innerHTML = `
+            <h3>💎 Gemzora</h3>
+            <p>Match gems and solve puzzles!</p>
+        `;
+
+        games.appendChild(card);
+    }
+});
+</script>
+ 
 </body>
 </html>
